@@ -41,7 +41,7 @@ class LoginActivity : AppCompatActivity() {
     // 카카오
     private fun getKakaoLoginUrlAndOpen() {
         val request = Request.Builder()
-            .url("http://10.0.2.2:8000/api/v1/auth/kakao/login_url")
+            .url("http://서버주소/api/v1/auth/kakao/login_url")
             .get().build()
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
@@ -67,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
         val json = JSONObject().apply { put("code", code) }
         val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
         val request = Request.Builder()
-            .url("http://10.0.2.2:8000/api/v1/auth/kakao/login")
+            .url("http://서버주소/api/v1/auth/kakao/login")
             .post(body).build()
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
@@ -113,7 +113,7 @@ class LoginActivity : AppCompatActivity() {
     // 구글
     private fun getGoogleLoginUrlAndOpen() {
         val request = Request.Builder()
-            .url("http://10.0.2.2:8000/api/v1/auth/google/login_url")
+            .url("http://서버주소/api/v1/auth/google/login_url")
             .get().build()
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
@@ -139,7 +139,7 @@ class LoginActivity : AppCompatActivity() {
         val json = JSONObject().apply { put("code", code) }
         val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
         val request = Request.Builder()
-            .url("http://10.0.2.2:8000/api/v1/auth/google/login_url")
+            .url("http://서버주소/api/v1/auth/google/login_url")
             .post(body).build()
         client.newCall(request).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {

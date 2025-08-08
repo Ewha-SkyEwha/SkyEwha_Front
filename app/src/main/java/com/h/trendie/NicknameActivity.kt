@@ -57,7 +57,7 @@ class NicknameActivity : AppCompatActivity() {
 
     // 카카오 신규회원
     private fun registerKakaoUser(nickname: String, email: String, tempToken: String, kakaoAccessToken: String) {
-        val url = "http://10.0.2.2:8000/api/v1/auth/kakao/signup"
+        val url = "http://서버주소/api/v1/auth/kakao/signup"
         val json = JSONObject().apply {
             put("nickname", nickname)
             put("email", email)
@@ -69,7 +69,7 @@ class NicknameActivity : AppCompatActivity() {
 
     // 구글 신규회원
     private fun registerGoogleUser(nickname: String, email: String, tempToken: String, googleAccessToken: String) {
-        val url = "http://10.0.2.2:8000/api/v1/auth/google/signup"
+        val url = "http://서버주소/api/v1/auth/google/signup"
         val json = JSONObject().apply {
             put("nickname", nickname)
             put("email", email)
