@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorBackground">#FFFFFF</color>
+    <color name="colorSurface">#FAFAFA</color>
+    <color name="colorPrimaryText">#000000</color>
+    <color name="colorGrey">#4F4F4F</color>
+    <color name="colorIndigo">#1A3B5D</color>3F618C
+    <color name="colorAccent">#9FBCDB</color>
+    <color name="colorBannerBg">#E6EFF9</color>
+    <color name="colorDivider">#9FBCDB</color>
+    <color name="colorPointText">#3F618C</color>
+    <color name="colorError">#FF2222</color>
+    <color name="bottom_nav_selected">#3F618C</color>
+    <color name="bottom_nav_unselected">#AAAAAA</color>
+</resources>

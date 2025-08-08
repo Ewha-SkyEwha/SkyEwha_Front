@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSurface">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <!-- 피드백 보고서 상단 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="피드백 보고서"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/colorIndigo"
+            android:layout_marginBottom="18dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_toggle_button"
+            android:elevation="1dp"
+            android:orientation="vertical"
+            android:padding="18dp"
+            android:layout_marginBottom="32dp"
+            android:layout_marginTop="4dp">
+            <TextView
+                android:id="@+id/tvGreeting"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="유명 님의 (영상 제목)에 대한\n피드백 보고서가 도착했습니다📨"
+                android:textSize="15sp"
+                android:textColor="@color/colorPrimaryText"
+                android:layout_gravity="center_horizontal" />
+        </LinearLayout>
+
+        <!-- 해시태그 추천 타이틀 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="# 해시태그 추천"
+            android:textStyle="bold"
+            android:textColor="@color/colorIndigo"
+            android:textSize="17sp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- 해시태그 리스트 -->
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvTags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_toggle_button"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp"/>
+
+        <!-- 제목 추천 타이틀 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="제목 추천"
+            android:textStyle="bold"
+            android:textColor="@color/colorIndigo"
+            android:textSize="17sp"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- 제목 추천 리스트 -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_toggle_button"
+            android:padding="14dp"
+            android:layout_marginBottom="16dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이 영상에 어울리는 제목은..."
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="15sp"
+                android:layout_marginBottom="8dp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryText"
+                android:text="1. 예시 제목 1"
+                android:textSize="15sp"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorPrimaryText"
+                android:text="2. 예시 제목 2"
+                android:textSize="15sp"/>
+        </LinearLayout>
+
+        <!-- 참고 영상 추천 타이틀 -->
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="참고 영상 추천"
+            android:textStyle="bold"
+            android:textColor="@color/colorIndigo"
+            android:textSize="17sp"
+            android:layout_marginBottom="8dp"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/rounded_toggle_button"
+            android:padding="14dp"
+            android:layout_marginBottom="8dp"
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="유튜브 제목1\nurl1"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="15sp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+
+</ScrollView>

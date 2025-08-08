@@ -1,0 +1,17 @@
+<!-- res/drawable/button_white.xml -->
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:state_pressed="true">
+        <shape android:shape="rectangle">
+            <solid android:color="#f0f0f0"/>
+            <corners android:radius="10dp"/>
+            <stroke android:width="1dp" android:color="#1A3B5D"/>
+        </shape>
+    </item>
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="#ffffff"/>
+            <corners android:radius="10dp"/>
+            <stroke android:width="1dp" android:color="#1A3B5D"/>
+        </shape>
+    </item>
+</selector>

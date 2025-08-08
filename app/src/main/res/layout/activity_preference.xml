@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSurface">
+
+    <!-- 상단 로고 -->
+    <ImageView
+        android:id="@+id/splashLogo"
+        android:layout_width="52dp"
+        android:layout_height="52dp"
+        android:src="@drawable/trendie_logo"
+        android:layout_gravity="center"
+        android:layout_marginTop="24dp"/>
+
+    <!-- 프로그레스바 -->
+    <LinearLayout
+        android:id="@+id/progressLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="center"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="24dp">
+
+        <View
+            android:id="@+id/step1"
+            android:layout_width="28dp"
+            android:layout_height="10dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/progress_on" />
+
+        <View
+            android:id="@+id/step2"
+            android:layout_width="28dp"
+            android:layout_height="10dp"
+            android:layout_marginEnd="8dp"
+            android:background="@drawable/progress_on" />
+
+        <View
+            android:id="@+id/step3"
+            android:layout_width="28dp"
+            android:layout_height="10dp"
+            android:background="@drawable/progress_off" />
+    </LinearLayout>
+
+    <!-- 질문 -->
+    <TextView
+        android:id="@+id/preferenceQuestion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="산 vs 바다 vs 도시\n내가 좋아하는 곳은?"
+        android:textColor="@color/colorPointText"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        android:gravity="center"
+        android:layout_marginBottom="12dp"
+        android:layout_marginTop="8dp"/>
+
+    <!-- 선택지 스크롤 -->
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal">
+
+            <!-- 산 -->
+            <ToggleButton
+                android:id="@+id/mtn"
+                android:layout_width="240dp"
+                android:layout_height="120dp"
+                android:textColor="@color/colorPrimaryText"
+                android:textOff="산⛰️"
+                android:textOn="산⛰️"
+                android:textSize="18sp"
+                android:background="@drawable/rounded_toggle_button"
+                android:layout_marginTop="16dp" />
+
+            <!-- 바다 -->
+            <ToggleButton
+                android:id="@+id/sea"
+                android:layout_width="240dp"
+                android:layout_height="120dp"
+                android:textColor="@color/colorPrimaryText"
+                android:textOff="바다🌊"
+                android:textOn="바다🌊"
+                android:textSize="18sp"
+                android:background="@drawable/rounded_toggle_button"
+                android:layout_marginTop="16dp" />
+
+            <!-- 도시 -->
+            <ToggleButton
+                android:id="@+id/city"
+                android:layout_width="240dp"
+                android:layout_height="120dp"
+                android:textColor="@color/colorPrimaryText"
+                android:textOff="도시🏙"
+                android:textOn="도시🏙"
+                android:textSize="18sp"
+                android:background="@drawable/rounded_toggle_button"
+                android:layout_marginTop="16dp" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- 하단 "다음으로" 버튼 -->
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="350dp"
+        android:layout_height="60dp"
+        android:text="다음으로"
+        android:textSize="18sp"
+        android:background="@drawable/rounded_toggle_skyblue_button"
+        android:textColor="@color/colorPrimaryText"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="20dp"
+        android:layout_gravity="center_horizontal"
+        android:enabled="false" />
+
+    <!-- 지금은 넘어갈래요 -->
+    <TextView
+        android:id="@+id/do_it_later"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="지금은 넘어갈래요"
+        android:gravity="center"
+        android:textColor="@color/colorPointText"
+        android:textSize="16sp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="36dp" />
+
+</LinearLayout>

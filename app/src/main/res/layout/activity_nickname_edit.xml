@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    android:gravity="center"
+    android:background="@color/colorBackground">
+
+    <EditText
+        android:id="@+id/editNickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="새 닉네임 입력"
+        android:textSize="18sp"
+        android:background="@drawable/rounded_white_button"
+        android:padding="12dp"
+        android:gravity="center"/>
+
+    <Button
+        android:id="@+id/btnSaveNickname"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="저장"
+        android:background="@drawable/rounded_toggle_button"
+        android:textColor="@color/colorPrimaryText"
+        android:layout_marginTop="20dp"/>
+</LinearLayout>

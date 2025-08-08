@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSurface">
+
+    <!-- 상단 로고 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:gravity="center_vertical"
+        android:paddingStart="16dp"
+        android:background="@color/colorSurface">
+        <TextView
+            android:id="@+id/tvLogo"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="TRENDIE"
+            android:textStyle="bold"
+            android:textColor="@color/colorAccent"
+            android:textSize="28sp" />
+    </LinearLayout>
+
+    <!-- 안내 멘트 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingHorizontal="24dp">
+        <TextView
+            android:id="@+id/tvKeywordGuide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="만들고 싶은 영상의 키워드를 입력하고\n관련 인기 영상을 확인해 보세요!"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimaryText"
+            android:gravity="center" />
+    </LinearLayout>
+
+    <!-- 키워드 입력창 및 검색 버튼 -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <EditText
+            android:id="@+id/etKeyword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="키워드를 입력하세요"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:background="@drawable/rounded_white_button"
+            android:padding="12dp"
+            android:imeOptions="actionSearch"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/btnSearchKeyword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="확인"
+            android:textStyle="bold"
+            android:textColor="@color/colorPrimaryText"
+            android:background="@drawable/rounded_toggle_button"
+            android:layout_marginTop="16dp" />
+    </LinearLayout>
+
+</LinearLayout>

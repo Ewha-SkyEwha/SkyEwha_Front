@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="wrap_content" android:padding="12dp">
+    <TextView
+        android:id="@+id/tvPreferenceTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="나의 선택"
+        android:textStyle="bold"
+        android:textSize="16sp"/>
+    <TextView
+        android:id="@+id/tvPreferenceValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="바다🌊"
+        android:textSize="15sp"
+        android:layout_marginTop="2dp"/>
+</LinearLayout>
