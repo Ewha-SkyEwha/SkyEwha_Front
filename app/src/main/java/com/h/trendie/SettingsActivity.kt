@@ -34,7 +34,7 @@ class SettingsActivity : AppCompatActivity() {
             Toast.makeText(this, "알림 설정 (보류)", Toast.LENGTH_SHORT).show()
         }
         findViewById<TextView>(R.id.tvDisplaySet).setOnClickListener {
-            Toast.makeText(this, "라이트/다크모드 (보류)", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "라이트/다크모드", Toast.LENGTH_SHORT).show()
         }
         findViewById<ImageView>(R.id.btnBack).setOnClickListener {
             finish()
@@ -60,47 +60,50 @@ class SettingsActivity : AppCompatActivity() {
 
         // 로그아웃 버튼
         findViewById<TextView>(R.id.tvLogout).setOnClickListener {
-            val userPrefs = getSharedPreferences("user_prefs", MODE_PRIVATE)
-            val accessToken = userPrefs.getString("accessToken", "") ?: ""
-            val refreshToken = userPrefs.getString("refreshToken", "") ?: ""
+            val userSp = getSharedPreferences(ApiConfig.PREFS_USER, MODE_PRIVATE)
+            val provider = userSp.getString(ApiConfig.KEY_PROVIDER, null) // "kakao" | "google" (Login/NicknameActivity에서 저장함)
 
-            val loginType = if (userPrefs.contains("kakaoAccessToken")) "kakao" else "google"
-            val logoutUrl = if (loginType == "kakao") {
-                "http://10.0.2.2:8000/api/v1/auth/kakao/logout"
-            } else {
-                "http://10.0.2.2:8000/api/v1/auth/google/logout"
+            fun clearAndGoLogin() {
+                // 로컬 세션 정리
+                userSp.edit().clear().apply()
+                getSharedPreferences(ApiConfig.PREFS_APP, MODE_PRIVATE).edit().clear().apply()
+
+                // 로그인 화면으로
+                val i = Intent(this, LoginActivity::class.java)
+                i.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+                startActivity(i)
+                finish()
             }
 
-            // 로그아웃 요청
-            val json = JSONObject().apply {
-                put("accessToken", accessToken)
-                put("refreshToken", refreshToken)
+            // provider 없으면 서버 호출 없이 바로 정리
+            if (provider.isNullOrBlank()) {
+                clearAndGoLogin()
+                return@setOnClickListener
             }
-            val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
-            val request = Request.Builder()
-                .url(logoutUrl)
-                .post(body)
+
+            // 서버 로그아웃 호출
+            val req = Request.Builder()
+                .url("${ApiConfig.BASE_URL}/api/v1/auth/$provider/logout")
+                .post(RequestBody.create("application/json".toMediaTypeOrNull(), "{}"))
                 .build()
 
-            client.newCall(request).enqueue(object : Callback {
-                override fun onResponse(call: Call, response: Response) {
-                    userPrefs.edit().clear().apply()
-                    prefs.edit().clear().apply()
-                    runOnUiThread {
-                        Toast.makeText(this@SettingsActivity, "로그아웃 완료!", Toast.LENGTH_SHORT).show()
-                        // 로그인 화면으로 이동
-                        val intent = Intent(this@SettingsActivity, LoginActivity::class.java)
-                        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
-                        startActivity(intent)
-                        finish()
-                    }
+            OkHttpClient().newCall(req).enqueue(object : okhttp3.Callback {
+                override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+                    // 로컬 세션 정리
+                    runOnUiThread { clearAndGoLogin() }
                 }
-                override fun onFailure(call: Call, e: IOException) {
-                    runOnUiThread {
-                        Toast.makeText(this@SettingsActivity, "로그아웃 실패: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
+                override fun onFailure(call: okhttp3.Call, e: IOException) {
+                    runOnUiThread { clearAndGoLogin() }
                 }
             })
         }
     }
 }
+
+/* 응답 URL 열어야 되면
+val res = JSONObject(resStr)
+val kakaoUrl = res.optString("kakao_logout_url", "")
+if (kakaoUrl.isNotBlank()) {
+    startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(kakaoUrl)))
+}
+clearAndGoLogin() */

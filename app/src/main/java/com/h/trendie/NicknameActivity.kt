@@ -22,12 +22,13 @@ class NicknameActivity : AppCompatActivity() {
         setContentView(R.layout.activity_nickname)
 
         val editNickname = findViewById<EditText>(R.id.editNickname)
-        val nextButton = findViewById<Button>(R.id.btnNextFromNickname)
-        val tvError = findViewById<TextView>(R.id.tvNicknameError)
+        val nextButton   = findViewById<Button>(R.id.btnNextFromNickname)
+        val tvError      = findViewById<TextView>(R.id.tvNicknameError)
 
+        // 유효성
         editNickname.addTextChangedListener(object : android.text.TextWatcher {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                val nickname = s.toString()
+                val nickname = s?.toString() ?: ""
                 val isValid = nickname.length in 2..10 && nickname.matches(Regex("^[a-zA-Z0-9가-힣]+$"))
                 nextButton.isEnabled = isValid
                 tvError.text = if (nickname.isEmpty() || isValid) "" else "닉네임 조건에 맞게 입력해주세요."
@@ -36,102 +37,85 @@ class NicknameActivity : AppCompatActivity() {
             override fun afterTextChanged(s: android.text.Editable?) {}
         })
 
-        val email = intent.getStringExtra("email") ?: ""
+        // 전달받은 값
+        val provider = intent.getStringExtra("provider") ?: "kakao" // "google" | "kakao"
+        val email    = intent.getStringExtra("email") ?: ""
         val tempToken = intent.getStringExtra("tempToken") ?: ""
-        val kakaoAccessToken = intent.getStringExtra("kakaoAccessToken") ?: ""
-        val googleAccessToken = intent.getStringExtra("googleAccessToken") ?: ""
-
-        // 로그인 타입
-        val isGoogle = googleAccessToken.isNotEmpty()
-        val isKakao = kakaoAccessToken.isNotEmpty()
+        val providerAccessToken = intent.getStringExtra("providerAccessToken") ?: ""
 
         nextButton.setOnClickListener {
             val nickname = editNickname.text.toString()
-            if (isGoogle) {
-                registerGoogleUser(nickname, email, tempToken, googleAccessToken)
-            } else {
-                registerKakaoUser(nickname, email, tempToken, kakaoAccessToken)
-            }
+            registerUser(provider, nickname, email, tempToken, providerAccessToken)
         }
     }
 
-    // 카카오 신규회원
-    private fun registerKakaoUser(nickname: String, email: String, tempToken: String, kakaoAccessToken: String) {
-        val url = "http://서버주소/api/v1/auth/kakao/signup"
+    /** /{provider}/signup 호출 */
+    private fun registerUser(
+        provider: String,
+        nickname: String,
+        email: String,
+        tempToken: String,
+        providerAccessToken: String
+    ) {
+        val url = "${ApiConfig.BASE_URL}/api/v1/auth/$provider/signup"
+
         val json = JSONObject().apply {
             put("nickname", nickname)
             put("email", email)
             put("tempToken", tempToken)
-            put("kakao_access_token", kakaoAccessToken)
+            // 서버 명세에 맞춰 key 이름 분기
+            put("${provider}_access_token", providerAccessToken) // kakao_access_token | google_access_token
         }
-        sendSignupRequest(url, json, nickname)
-    }
 
-    // 구글 신규회원
-    private fun registerGoogleUser(nickname: String, email: String, tempToken: String, googleAccessToken: String) {
-        val url = "http://서버주소/api/v1/auth/google/signup"
-        val json = JSONObject().apply {
-            put("nickname", nickname)
-            put("email", email)
-            put("tempToken", tempToken)
-            put("google_access_token", googleAccessToken)
-        }
-        sendSignupRequest(url, json, nickname)
-    }
+        val reqBody = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+        val req = Request.Builder().url(url).post(reqBody).build()
 
-    // 회원가입 공통 처리
-    private fun sendSignupRequest(url: String, json: JSONObject, nickname: String) {
-        val requestBody = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
-        val request = Request.Builder()
-            .url(url)
-            .post(requestBody)
-            .build()
-        client.newCall(request).enqueue(object : Callback {
+        client.newCall(req).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
                 val resStr = response.body?.string() ?: ""
+                Log.d("앱체크", "[$provider] /signup 응답: $resStr")
+
                 if (!response.isSuccessful) {
-                    Log.e("회원가입 에러", "Code: ${response.code}, body: $resStr")
-                    runOnUiThread {
-                        Toast.makeText(this@NicknameActivity, "회원가입 실패: 서버 오류", Toast.LENGTH_SHORT).show()
-                    }
+                    runOnUiThread { Toast.makeText(this@NicknameActivity, "회원가입 실패(${response.code})", Toast.LENGTH_SHORT).show() }
                     return
                 }
-                Log.d("회원가입 응답", resStr)
-                try {
-                    val jsonResponse = JSONObject(resStr)
-                    val accessToken = jsonResponse.optString("accessToken", "")
-                    val refreshToken = jsonResponse.optString("refreshToken", "")
-                    saveAuthToken(accessToken, refreshToken)
 
+                try {
+                    val jr = JSONObject(resStr)
+                    val access  = jr.optString("accessToken", "")
+                    val refresh = jr.optString("refreshToken", "")
+                    if (access.isBlank()) throw IllegalStateException("accessToken 없음")
+
+                    saveAuth(access, refresh, provider, email)
                     runOnUiThread {
-                        val intent = Intent(this@NicknameActivity, PreferenceActivity::class.java)
-                        intent.putExtra("nickname", nickname)
-                        startActivity(intent)
+                        val i = Intent(this@NicknameActivity, PreferenceActivity::class.java)
+                        i.putExtra("nickname", nickname)
+                        i.putExtra("email", email)
+                        startActivity(i)
                         finish()
                     }
                 } catch (e: Exception) {
-                    Log.e("회원가입 파싱실패", "Malformed JSON: $resStr")
-                    runOnUiThread {
-                        Toast.makeText(this@NicknameActivity, "잘못된 서버 응답!", Toast.LENGTH_SHORT).show()
-                    }
+                    Log.e("앱체크", "[$provider] /signup 파싱 실패: $resStr", e)
+                    runOnUiThread { Toast.makeText(this@NicknameActivity, "서버 응답 파싱 실패", Toast.LENGTH_SHORT).show() }
                 }
             }
+
             override fun onFailure(call: Call, e: IOException) {
-                runOnUiThread {
-                    Toast.makeText(this@NicknameActivity, "회원가입 실패: 네트워크 오류", Toast.LENGTH_SHORT).show()
-                }
+                Log.e("앱체크", "[$provider] /signup onFailure: ${e.message}", e)
+                runOnUiThread { Toast.makeText(this@NicknameActivity, "회원가입 네트워크 오류", Toast.LENGTH_SHORT).show() }
             }
         })
     }
 
-    private fun saveAuthToken(accessToken: String, refreshToken: String) {
-        if (accessToken.isEmpty()) return
-        val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
-        sharedPref.edit().apply {
-            putString("accessToken", accessToken)
-            putString("refreshToken", refreshToken)
+    private fun saveAuth(access: String, refresh: String, provider: String, email: String?) {
+        val sp = getSharedPreferences(ApiConfig.PREFS_USER, MODE_PRIVATE)
+        sp.edit().apply {
+            putString(ApiConfig.KEY_ACCESS, access)
+            putString(ApiConfig.KEY_REFRESH, refresh)
+            putString(ApiConfig.KEY_PROVIDER, provider)
+            if (!email.isNullOrBlank()) putString(ApiConfig.KEY_EMAIL, email)
             apply()
         }
-        Log.d("TokenCheck", "Saved accessToken: $accessToken, refreshToken: $refreshToken")
+        Log.d("앱체크", "회원가입 토큰 저장 완료 provider=$provider")
     }
 }
