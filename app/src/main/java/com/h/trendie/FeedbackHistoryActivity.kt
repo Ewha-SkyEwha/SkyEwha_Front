@@ -2,18 +2,28 @@ package com.h.trendie
 
 import FeedbackHistoryAdapter
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.h.trendie.data.AppDatabase
+import com.h.trendie.ui.theme.applyTopInsetPadding
 import kotlinx.coroutines.launch
 
 class FeedbackHistoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feedback_history)
+
+        findViewById<View>(R.id.fbToolbar)?.applyTopInsetPadding()
+        findViewById<TextView>(R.id.tvTitle)?.text =
+            getString(R.string.title_feedback_history)
+        findViewById<View>(R.id.btnBack)?.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         val rv = findViewById<RecyclerView>(R.id.rvFeedbackHistory)
         rv.layoutManager = LinearLayoutManager(this)

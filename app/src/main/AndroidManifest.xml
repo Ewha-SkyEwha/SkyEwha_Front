@@ -26,16 +26,20 @@
         </activity>
 
         <!-- 로그인 / 초기 플로우 -->
-        <activity android:name=".LoginActivity"
-                  android:exported="true">
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true"
+            android:launchMode="singleTop">
+
+            <!-- trendie://oauth/callback -->
             <intent-filter>
-                <action android:name="android.intent.action.VIEW"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
                 <data
                     android:scheme="trendie"
                     android:host="oauth"
-                    android:path="/callback"/>
+                    android:path="/callback" />
             </intent-filter>
         </activity>
 

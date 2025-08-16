@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="8dp"
+    android:gravity="start|center_vertical">
+
+    <!-- 텍스트 로고 -->
+    <TextView
+        android:id="@+id/logo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="start|center_vertical"
+        android:text="@string/brand_trendie"
+        android:textAllCaps="true"
+        android:textStyle="bold"
+        android:letterSpacing="0.06"
+        android:textSize="28sp"
+        android:textColor="@color/brand_logo"
+        android:contentDescription="@string/app_name"/>
+</FrameLayout>

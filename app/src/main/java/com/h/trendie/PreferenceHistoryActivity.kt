@@ -1,15 +1,25 @@
 package com.h.trendie
 
 import android.os.Bundle
+import android.view.View
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.h.trendie.ui.theme.applyTopInsetPadding
 
 class PreferenceHistoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preference_history)
+
+        findViewById<View>(R.id.prefToolbar)?.applyTopInsetPadding()
+        findViewById<TextView>(R.id.tvTitle)?.text =
+            getString(R.string.title_preference_history)
+        findViewById<View>(R.id.btnBack)?.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         val recyclerView = findViewById<RecyclerView>(R.id.recyclerView)
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -23,7 +33,5 @@ class PreferenceHistoryActivity : AppCompatActivity() {
 
         recyclerView.adapter = PreferenceHistoryAdapter(items)
 
-        // 뒤로가기
-        findViewById<ImageView>(R.id.btnBack)?.setOnClickListener { finish() }
     }
 }

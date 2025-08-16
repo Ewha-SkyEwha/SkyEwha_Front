@@ -9,26 +9,31 @@
 
     <!-- 상단 설정바 -->
     <LinearLayout
+        android:id="@+id/mypageToolbar"
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="wrap_content"
+        android:minHeight="?attr/actionBarSize"
         android:orientation="horizontal"
-        android:paddingTop="16dp"
-        android:paddingEnd="16dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingBottom="8dp">
 
-        <View
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-        <TextView
-            android:id="@+id/setting"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="⚙"
-            android:textColor="@color/colorPointText"
-            android:textSize="26sp"
-            android:textStyle="bold"
-            android:clickable="true"
-            android:focusable="true"/>
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <!-- 톱니 아이콘 버튼 (터치 48dp) -->
+    <ImageButton
+        android:id="@+id/btnSettings"
+        style="?attr/borderlessButtonStyle"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="8dp"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        app:srcCompat="@drawable/ic_settings"
+        android:contentDescription="@string/settings"
+        app:tint="@color/colorPointText" />
     </LinearLayout>
 
     <!-- 프로필 -->

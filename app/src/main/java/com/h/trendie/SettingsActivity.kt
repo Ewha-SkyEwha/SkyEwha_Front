@@ -2,6 +2,8 @@ package com.h.trendie
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
+import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
@@ -9,6 +11,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
+import com.h.trendie.ui.theme.applyTopInsetPadding
 import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
@@ -17,9 +20,21 @@ import java.io.IOException
 class SettingsActivity : AppCompatActivity() {
     private val client = OkHttpClient()
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
+        Log.d("SETTINGS", "onCreate")
+        Toast.makeText(this, "설정 화면 진입", Toast.LENGTH_SHORT).show()
+
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_settings)
+
+        findViewById<View>(R.id.settingsToolbar)?.applyTopInsetPadding()
+
+        findViewById<TextView>(R.id.tvTitle)?.text = getString(R.string.title_settings)
+
+        findViewById<View>(R.id.btnBack)?.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
 
         findViewById<TextView>(R.id.tvTerms).setOnClickListener {
             Toast.makeText(this, "이용약관 (추후 연결)", Toast.LENGTH_SHORT).show()
@@ -35,9 +50,6 @@ class SettingsActivity : AppCompatActivity() {
         }
         findViewById<TextView>(R.id.tvDisplaySet).setOnClickListener {
             Toast.makeText(this, "라이트/다크모드", Toast.LENGTH_SHORT).show()
-        }
-        findViewById<ImageView>(R.id.btnBack).setOnClickListener {
-            finish()
         }
 
         val layoutDisplay = findViewById<LinearLayout>(R.id.layoutDisplayMode)
@@ -97,6 +109,10 @@ class SettingsActivity : AppCompatActivity() {
                 }
             })
         }
+    }
+    override fun onDestroy() {
+        super.onDestroy()
+        Log.d("SETTINGS", "onDestroy")
     }
 }
 

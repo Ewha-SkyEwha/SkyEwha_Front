@@ -18,26 +18,37 @@ class LoginActivity : AppCompatActivity() {
     private lateinit var binding: ActivityLoginBinding
     private val client = OkHttpClient()
 
-    // 사용자가 어떤 로그인 버튼을 눌렀는지 기록 (콜백에서 구분용)
+    // 누른 로그인 버튼 기록 (콜백 구분용)
     private var lastProvider: String? = null // "kakao" | "google"
+
+    // 브라우저 왕복 중 Activity 재시작 경우 기억 위한 임시 저장소
+    private val flowSp by lazy { getSharedPreferences("auth_flow", MODE_PRIVATE) }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // 재시작된 경우 pendingProvider 복구
+        lastProvider = flowSp.getString("pendingProvider", null)
+
         val googleBtn = findViewById<LinearLayout>(R.id.btnGoogle)
         val kakaoBtn  = findViewById<LinearLayout>(R.id.btnKakao)
 
         googleBtn.setOnClickListener {
             lastProvider = "google"
+            flowSp.edit().putString("pendingProvider", "google").apply() // 저장
             getLoginUrlAndOpen("google")
         }
 
         kakaoBtn.setOnClickListener {
             lastProvider = "kakao"
+            flowSp.edit().putString("pendingProvider", "kakao").apply()
             getLoginUrlAndOpen("kakao")
         }
+
+        // 새로 시작&딥링크로 들어온 경우 처리
+        handleAuthIntent(intent)
     }
 
     /** 1) 서버에서 로그인 URL 받아서 브라우저 열기 */
@@ -84,19 +95,31 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
-    /** 2) 딥링크 콜백 (redirect_uri로 돌아왔을 때) */
+    /** 2) 딥링크 콜백 (redirect_uri로 돌아왔을 때) - 새 인텐트로 들어오는 경우 */
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
-        val uri = intent?.data ?: return
-        val code = uri.getQueryParameter("code") ?: return
+        setIntent(intent)             // ✅ 인텐트 교체
+        handleAuthIntent(intent)      // ✅ 공통 처리
+    }
 
-        // 버튼 누를 때 기록한 provider 우선 사용
-        val provider = lastProvider ?: run {
-            // 혹시 모르면 uri에서 간접 추정 (옵션)
-            if (uri.toString().contains("google", true)) "google" else "kakao"
+    /** 공통 콜백 처리 (onCreate/onNewIntent 양쪽에서 호출) */
+    private fun handleAuthIntent(i: Intent?) {
+        val uri = i?.data ?: return
+        Log.d("앱체크", "딥링크 수신 uri=$uri")
+        val code = uri.getQueryParameter("code") ?: run {
+            Log.e("앱체크", "code 파라미터 없음!")
+            return
         }
-        Log.d("앱체크", "콜백 수신: provider=$provider, code=$code")
 
+        // 버튼 누를 때 기록한 provider 우선, 없으면 저장소 복구, 그래도 없으면 추정
+        val provider = lastProvider
+            ?: flowSp.getString("pendingProvider", null)
+            ?: if (uri.toString().contains("google", true)) "google" else "kakao"
+
+        // 사용 끝났으면 정리
+        flowSp.edit().remove("pendingProvider").apply()
+
+        Log.d("앱체크", "콜백 수신: provider=$provider, code=$code")
         sendLoginCodeToServer(provider, code)
     }
 
@@ -115,7 +138,9 @@ class LoginActivity : AppCompatActivity() {
                 Log.d("앱체크", "[$provider] /login 응답: $resStr")
 
                 if (!response.isSuccessful) {
-                    runOnUiThread { Toast.makeText(this@LoginActivity, "로그인 실패(${response.code})", Toast.LENGTH_SHORT).show() }
+                    runOnUiThread {
+                        Toast.makeText(this@LoginActivity, "로그인 실패(${response.code})", Toast.LENGTH_SHORT).show()
+                    }
                     return
                 }
 

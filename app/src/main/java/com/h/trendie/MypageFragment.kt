@@ -8,10 +8,19 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.h.trendie.FeedbackHistoryActivity
+import com.h.trendie.ui.theme.applyTopInsetPadding
 
 class MypageFragment : Fragment(R.layout.fragment_mypage) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        // 상태바 인셋만큼 내림
+        view.findViewById<View>(R.id.mypageToolbar)?.applyTopInsetPadding()
+
+        // 설정
+        view.findViewById<View>(R.id.btnSettings)?.setOnClickListener {
+            startActivity(Intent(requireContext(), SettingsActivity::class.java))
+        }
 
         val prefs = requireContext().getSharedPreferences("user_prefs", MODE_PRIVATE)
         val storedName = prefs.getString("nickname", "유저")
@@ -23,10 +32,6 @@ class MypageFragment : Fragment(R.layout.fragment_mypage) {
         view.findViewById<TextView>(R.id.joinDate).text =
             "${storedName}님과 Trendie는\n${dateStr}부터 함께했어요!"
 
-        // 설정
-        view.findViewById<TextView>(R.id.setting).setOnClickListener {
-            startActivity(Intent(requireContext(), SettingsActivity::class.java))
-        }
         // 닉네임 수정
         view.findViewById<ImageView>(R.id.editNickname).setOnClickListener {
             startActivity(Intent(requireContext(), NicknameEditActivity::class.java))

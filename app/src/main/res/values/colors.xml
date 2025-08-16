@@ -12,4 +12,7 @@
     <color name="colorError">#FF2222</color>
     <color name="bottom_nav_selected">#3F618C</color>
     <color name="bottom_nav_unselected">#AAAAAA</color>
+    <color name="chart_bar_first">#3F618C</color>
+    <color name="chart_bar_default">#9FBCDB</color>
+    <color name="brand_logo">#9FBCDB</color>
 </resources>

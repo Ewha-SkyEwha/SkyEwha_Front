@@ -3,4 +3,10 @@
     <string name="subtitle_text">Be <b>Trendy</b> with <font color="#003366">Trendie</font></string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="brand_trendie">TRENDIE</string>
+    <string name="settings">설정</string>
+    <string name="back">뒤로가기</string>
+    <string name="title_settings">설정</string>
+    <string name="title_preference_history">선호도 조사 내역</string>
+    <string name="title_feedback_history">보고서 피드백 내역</string>
 </resources>
