@@ -1,34 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/simpleToolbar"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:minHeight="?attr/actionBarSize"
-    android:orientation="horizontal"
+    android:gravity="center_vertical"
     android:paddingStart="16dp"
     android:paddingEnd="16dp"
-    android:paddingBottom="8dp">
+    android:background="@color/colorBackground">
 
-    <ImageButton
-    android:id="@+id/btnBack"
-    style="?attr/borderlessButtonStyle"
-    android:layout_width="48dp"
-    android:layout_height="48dp"
-    android:padding="8dp"
-    android:background="?attr/selectableItemBackgroundBorderless"
-    android:contentDescription="@string/back"
-    app:tint="?attr/colorControlNormal"
-    android:src="@drawable/ic_arrow_back"/>
+    <ImageView
+        android:id="@+id/btnBack"
+        android:layout_width="48dp"
+        android:layout_height="48dp"
+        android:padding="12dp"
+        android:src="@drawable/ic_arrow_back"
+        android:tint="@color/colorPrimaryText"
+        android:contentDescription="@string/back"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?android:attr/selectableItemBackgroundBorderless" />
 
     <TextView
-    android:id="@+id/tvTitle"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center_vertical"
-    android:layout_weight="1"
-    android:text=""
-    android:textSize="18sp"
-    android:textStyle="bold"
-    android:textColor="?attr/colorOnSurface"/>
-    </LinearLayout>
+        android:id="@+id/tvTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_weight="1"
+        android:text="@string/title_settings"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        android:textColor="@color/colorPrimaryText" />
+
+</LinearLayout>

@@ -10,5 +10,12 @@ object ApiConfig {
     const val KEY_PROVIDER = "provider"           // "kakao" | "google"
     const val KEY_EMAIL = "email"
 
-    const val PREFS_APP = "trendie_prefs"         // 다크모드 등 (기존 유지)
+    const val KEY_NICKNAME = "nickname"
+    const val KEY_PREF_CHOICES = "preference_choices"
+
+    const val KEY_INSTALL_DATE = "install_date"
+
+    const val KEY_DARK_MODE = "dark_mode"
+
+    const val PREFS_APP = "trendie_prefs"         // 다크모드 등
 }

@@ -10,6 +10,7 @@ class NicknameEditActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_nickname_edit)
+        setupSimpleToolbar(R.string.title_settings)
 
         val editText = findViewById<EditText>(R.id.editNickname)
         val btnSave = findViewById<Button>(R.id.btnSaveNickname)

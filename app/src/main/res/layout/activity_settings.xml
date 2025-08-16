@@ -1,181 +1,168 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
-    android:padding="24dp">
+    android:background="@color/colorBackground">
 
+    <!-- Toolbar -->
     <include
         android:id="@+id/settingsToolbar"
-        layout="@layout/view_simple_toolbar"/>
+        layout="@layout/view_simple_toolbar" />
 
-    <!-- 상단바 -->
+    <!-- 콘텐츠 패딩 -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:paddingBottom="12dp">
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingEnd="24dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="24dp">
 
-        <!-- 설정 텍스트 -->
-        <TextView
-            android:id="@+id/settingTitle"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="설정"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="24sp"
-            android:textStyle="bold" />
-
-        <!-- (우측 여백이 필요하다면) -->
-        <View
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:layout_weight="1"/>
-    </LinearLayout>
-
-    <!-- 구분선 -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimaryText" />
-
-    <!-- 이용약관 -->
-    <TextView
-            android:id="@+id/tvTerms"
+        <!-- 이용약관 -->
+        <LinearLayout
+            android:id="@+id/rowTerms"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="이용약관"
-            android:textSize="18sp"
-            android:padding="16dp"
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimaryText"
-            android:background="@android:color/transparent"/>
-
-    <!-- 구분선 -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimaryText"/>
-
-    <!-- 공지사항 -->
-    <TextView
-            android:id="@+id/tvNotice"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="공지사항"
-            android:textSize="18sp"
-            android:padding="16dp"
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimaryText"
-            android:background="@android:color/transparent"/>
-    <!-- 구분선 -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimaryText" />
-
-    <!-- 고객센터 -->
-    <TextView
-        android:id="@+id/tvCstService"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="고객센터"
-        android:textSize="18sp"
-        android:padding="16dp"
-        android:textStyle="bold"
-        android:textColor="@color/colorPrimaryText"
-        android:background="@android:color/transparent"/>
-
-    <!-- 구분선 -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimaryText" />
-
-    <!-- 알림 설정 -->
-    <TextView
-        android:id="@+id/tvAlarm"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="알림설정"
-        android:textSize="18sp"
-        android:padding="16dp"
-        android:textStyle="bold"
-        android:textColor="@color/colorPrimaryText"
-        android:background="@android:color/transparent"/>
-
-    <!-- 구분선 -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimaryText" />
-
-    <!-- 디스플레이 -->
-    <LinearLayout
-        android:id="@+id/layoutDisplayMode"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="?android:attr/selectableItemBackground"
-        android:gravity="center_vertical">
-
-        <TextView
-            android:id="@+id/tvDisplaySet"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="디스플레이"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:textColor="@color/colorPrimaryText"/>
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+            <TextView
+                android:id="@+id/tvTerms"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="이용약관"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16sp" />
+        </LinearLayout>
 
         <View
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:background="@color/colorDivider" />
+
+        <!-- 공지사항 -->
+        <LinearLayout
+            android:id="@+id/rowNotice"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+            <TextView
+                android:id="@+id/tvNotice"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="공지사항"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider" />
+
+        <!-- 고객센터 -->
+        <LinearLayout
+            android:id="@+id/rowCs"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+            <TextView
+                android:id="@+id/tvCstService"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="고객센터"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider" />
+
+        <!-- 알림설정 (필요 시 연결) -->
+        <LinearLayout
+            android:id="@+id/rowAlarm"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+            <TextView
+                android:id="@+id/tvAlarm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="알림설정"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16sp" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider" />
+
+        <!-- 디스플레이(우측 상태 표시) -->
+        <LinearLayout
+            android:id="@+id/layoutDisplayMode"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:clickable="true"
+            android:foreground="?android:attr/selectableItemBackground">
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="디스플레이"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="16sp" />
+
+            <TextView
+                android:id="@+id/tvCurrentMode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="라이트모드"
+                android:textColor="@color/colorPrimaryText"
+                android:textSize="14sp"
+                android:paddingEnd="8dp" />
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/ic_lnmode"
+                android:contentDescription="@string/display" />
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/colorDivider" />
+
+        <!-- 공간 채우기: 로그아웃 아래로 밀기 -->
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
             android:layout_weight="1" />
 
+        <!-- 로그아웃 -->
         <TextView
-            android:id="@+id/tvCurrentMode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="라이트모드"
-            android:textColor="@color/bottom_nav_unselected"
+            android:id="@+id/tvLogout"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:gravity="center_vertical"
+            android:text="로그아웃"
             android:textSize="16sp"
-            android:paddingEnd="4dp"/>
-
-        <ImageView
-            android:id="@+id/lnmode"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/ic_lnmode"
-            android:scaleType="centerInside"
-            android:paddingStart="4dp"/>
+            android:textColor="@color/colorPrimaryText"
+            android:foreground="?android:attr/selectableItemBackground"
+            android:paddingStart="16dp"
+            android:paddingEnd="16dp" />
     </LinearLayout>
-
-    <!-- 구분선 -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="@color/colorPrimaryText" />
-
-
-    <!-- 여백을 위한 weight view -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <!-- 로그아웃 텍스트 버튼 (하단) -->
-    <TextView
-        android:id="@+id/tvLogout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="로그아웃"
-        android:textSize="16sp"
-        android:textColor="@color/bottom_nav_unselected"
-        android:padding="16dp" />
-
 </LinearLayout>

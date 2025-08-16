@@ -1,45 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:fitsSystemWindows="true"
     android:background="@color/colorBackground">
 
-    <!-- 상단 타이틀바 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:padding="24dp">
+    <include
+        android:id="@+id/prefToolbar"
+        layout="@layout/view_simple_toolbar" />
 
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/backbutton"
-            android:contentDescription="뒤로가기"/>
-        <!-- 타이틀 -->
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text=" 받아 본 피드백 보고서 내역"
-            android:textStyle="bold"
-            android:textSize="20sp"
-            android:textColor="@color/colorPrimaryText"/>
-    </LinearLayout>
-
-    <!-- 리스트 -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvFeedbackHistory"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:divider="@color/colorDivider"
-        android:dividerHeight="1dp"/>
-
-
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:clipToPadding="false" />
 </LinearLayout>

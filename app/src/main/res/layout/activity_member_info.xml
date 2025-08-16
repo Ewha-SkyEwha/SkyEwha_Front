@@ -1,121 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorBackground"
-    android:padding="24dp">
+    android:fitsSystemWindows="true"
+    android:background="@color/colorBackground">
 
-    <!-- 상단 타이틀바 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="28dp">
-        <ImageView
-            android:id="@+id/btnBack"
-            android:layout_width="28dp"
-            android:layout_height="28dp"
-            android:src="@drawable/backbutton"
-            android:contentDescription="뒤로가기"
-            android:layout_marginEnd="8dp" />
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="회원 정보 관리"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="22sp"
-            android:textStyle="bold" />
-    </LinearLayout>
+    <!--툴바-->
+    <include
+        android:id="@+id/prefToolbar"
+        layout="@layout/view_simple_toolbar" />
 
-    <!-- 닉네임 수정 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="14dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textColor="@color/colorPrimaryText"
-            android:text="닉네임 "
-            android:textSize="18sp"/>
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="유명"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="16sp"/>
-    </LinearLayout>
-
-    <!-- 이메일 -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:gravity="center_vertical"
-        android:layout_marginBottom="20dp">
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="연동 계정 "
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="18sp"/>
-        <TextView
-            android:id="@+id/tvEmail"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="famous@naver.com"
-            android:textColor="@color/colorPrimaryText"
-            android:textSize="16sp"/>
-    </LinearLayout>
-
-    <!-- 비밀번호 변경 -->
-    <Button
-        android:id="@+id/btnChangePassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="비밀번호 변경"
-        android:textColor="@color/colorPointText"
-        android:background="@color/colorBannerBg"
-        android:layout_marginTop="20dp"/>
-
-    <!-- 개인정보 -->
-    <Button
-        android:id="@+id/btnPersonalInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="개인정보"
-        android:textColor="@color/colorPointText"
-        android:background="@color/colorBannerBg"
-        android:layout_marginTop="12dp"/>
-
-    <!-- 구독 -->
-    <Button
-        android:id="@+id/btnSubscribe"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="구독"
-        android:textColor="@color/colorPointText"
-        android:background="@color/colorBannerBg"
-        android:layout_marginTop="12dp"/>
-
-    <!-- 하단 여백 -->
-    <View
+    <!-- 내용 스크롤 -->
+    <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"/>
+        android:layout_weight="1"
+        android:fillViewport="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="회원탈퇴"
-        android:textColor="@color/colorPrimaryText"
-        android:textSize="15sp"
-        android:layout_marginBottom="0dp"/>
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="24dp">
 
+            <!-- 정보 -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginTop="16dp"
+                android:layout_marginBottom="20dp">
 
+                <!-- 닉네임 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="닉네임"
+                    android:textColor="@color/colorPrimaryText"
+                    android:textSize="16sp" />
+
+                <TextView
+                    android:id="@+id/tvNickname"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="유명"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="16sp"
+                    android:layout_marginTop="2dp" />
+
+                <!-- 이메일 -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="연동 계정"
+                    android:textColor="@color/colorPrimaryText"
+                    android:textSize="16sp"
+                    android:layout_marginTop="16dp" />
+
+                <TextView
+                    android:id="@+id/tvEmail"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="famous@naver.com"
+                    android:textColor="@color/colorGrey"
+                    android:textSize="16sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+
+            <!-- 액션 버튼들 -->
+            <Button
+                android:id="@+id/btnChangePassword"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="비밀번호 변경"
+                android:textColor="@color/colorIndigo"
+                android:background="@drawable/rounded_button"
+                android:layout_marginTop="8dp" />
+
+            <Button
+                android:id="@+id/btnPersonalInfo"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="개인정보"
+                android:textColor="@color/colorIndigo"
+                android:background="@drawable/rounded_button"
+                android:layout_marginTop="12dp" />
+
+            <Button
+                android:id="@+id/btnSubscribe"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:text="구독"
+                android:textColor="@color/colorIndigo"
+                android:background="@drawable/rounded_button"
+                android:layout_marginTop="12dp" />
+
+            <!-- 하단 여백 -->
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="24dp" />
+
+            <!-- 회원탈퇴 (클릭 가능 + 리플) -->
+            <TextView
+                android:id="@+id/tvWithdraw"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:gravity="center_vertical"
+                android:paddingStart="8dp"
+                android:text="회원탈퇴"
+                android:textSize="15sp"
+                android:textColor="@color/colorError"
+                android:clickable="true"
+                android:focusable="true"
+                android:foreground="?android:attr/selectableItemBackground" />
+        </LinearLayout>
+    </ScrollView>
 </LinearLayout>

@@ -12,6 +12,8 @@ import okhttp3.*
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
 import org.json.JSONObject
 import java.io.IOException
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 
 class NicknameActivity : AppCompatActivity() {
 
@@ -67,7 +69,8 @@ class NicknameActivity : AppCompatActivity() {
             put("${provider}_access_token", providerAccessToken) // kakao_access_token | google_access_token
         }
 
-        val reqBody = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+        val reqBody = json.toString()
+            .toRequestBody("application/json; charset=utf-8".toMediaType())
         val req = Request.Builder().url(url).post(reqBody).build()
 
         client.newCall(req).enqueue(object : Callback {

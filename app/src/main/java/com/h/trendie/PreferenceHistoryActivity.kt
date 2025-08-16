@@ -13,6 +13,7 @@ class PreferenceHistoryActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_preference_history)
+        setupSimpleToolbar(R.string.title_settings)
 
         findViewById<View>(R.id.prefToolbar)?.applyTopInsetPadding()
         findViewById<TextView>(R.id.tvTitle)?.text =
