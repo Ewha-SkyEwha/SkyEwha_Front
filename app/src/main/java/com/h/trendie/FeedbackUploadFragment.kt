@@ -3,26 +3,30 @@ package com.h.trendie
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 
 class FeedbackUploadFragment : Fragment(R.layout.fragment_feedback_upload) {
 
-    companion object {
-        private const val REQUEST_VIDEO = 1001
-    }
+    companion object { private const val REQUEST_VIDEO = 1001 }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         val btnUpload = view.findViewById<Button>(R.id.btnUpload)
+        val etFeedbackTitle = view.findViewById<EditText>(R.id.etFeedbackTitle)
+
         btnUpload.setOnClickListener {
+            // 제목 필수 체크
+            val title = etFeedbackTitle?.text?.toString()?.trim().orEmpty()
+            if (title.isBlank()) {
+                Toast.makeText(requireContext(), "제목을 입력해 주세요.", Toast.LENGTH_SHORT).show()
+                return@setOnClickListener
+            }
+
             val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
                 type = "video/mp4"
                 addCategory(Intent.CATEGORY_OPENABLE)
@@ -42,11 +46,13 @@ class FeedbackUploadFragment : Fragment(R.layout.fragment_feedback_upload) {
                 return
             }
             val nickname = requireContext()
-                .getSharedPreferences("user_prefs", AppCompatActivity.MODE_PRIVATE)
+                .getSharedPreferences("user_prefs", android.content.Context.MODE_PRIVATE)
                 .getString("nickname", "유저")!!
-            val etFeedbackTitle = view?.findViewById<EditText>(R.id.etFeedbackTitle)
-            val title = etFeedbackTitle?.text?.toString()?.trim() ?: ""
 
+            val title = view?.findViewById<EditText>(R.id.etFeedbackTitle)
+                ?.text?.toString()?.trim().orEmpty()
+
+            // ⬇ 제목은 반드시 넘어감
             val intent = Intent(requireContext(), FeedbackReportActivity::class.java).apply {
                 putExtra("videoUri", videoUri.toString())
                 putExtra("videoTitle", title)

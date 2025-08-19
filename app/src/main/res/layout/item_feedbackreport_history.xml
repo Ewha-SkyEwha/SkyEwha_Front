@@ -1,31 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="48dp"
+    android:layout_height="56dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
     android:gravity="center_vertical"
-    android:background="@android:color/transparent"
-    android:paddingStart="8dp"
-    android:paddingEnd="8dp">
+    android:paddingStart="12dp"
+    android:paddingEnd="12dp"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    android:background="@android:color/transparent">
 
     <TextView
         android:id="@+id/tvTitle"
         android:layout_width="0dp"
-        android:layout_weight="1"
         android:layout_height="wrap_content"
-        android:text="부산 힐링혼여 여름바다"
+        android:layout_weight="1"
         android:textSize="16sp"
-        android:textColor="@color/colorPrimaryText" />
+        android:maxLines="1"
+        android:ellipsize="end"
+        android:textColor="@color/colorPrimaryText"
+        tools:text="부산 힐링혼여 여름바다" />
 
     <TextView
         android:id="@+id/tvDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="2025.06.18."
         android:textSize="14sp"
         android:textColor="@color/colorDivider"
-        android:layout_marginEnd="6dp" />
+        android:layout_marginEnd="6dp"
+        tools:text="2025.06.18." />
 
     <ImageView
         android:id="@+id/imgArrow"
@@ -33,4 +39,5 @@
         android:layout_height="20dp"
         android:src="@drawable/ic_chevron_right"
         app:tint="@color/colorDivider" />
+
 </LinearLayout>

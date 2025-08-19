@@ -1,18 +1,19 @@
+package com.h.trendie
+
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.h.trendie.HistoryItem
-import com.h.trendie.R
 
 class FeedbackHistoryAdapter(
-    private val items: MutableList<HistoryItem>
+    private val items: MutableList<HistoryItem>,
+    private val onClick: (HistoryItem) -> Unit
 ) : RecyclerView.Adapter<FeedbackHistoryAdapter.HistoryVH>() {
 
     inner class HistoryVH(v: View) : RecyclerView.ViewHolder(v) {
         val tvTitle: TextView = v.findViewById(R.id.tvTitle)
-        val tvDate: TextView = v.findViewById(R.id.tvDate)
+        val tvDate: TextView  = v.findViewById(R.id.tvDate)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): HistoryVH {
@@ -22,8 +23,10 @@ class FeedbackHistoryAdapter(
     }
 
     override fun onBindViewHolder(holder: HistoryVH, position: Int) {
-        holder.tvTitle.text = items[position].title
-        holder.tvDate.text  = items[position].date
+        val item = items[position]
+        holder.tvTitle.text = item.title
+        holder.tvDate.text  = item.date
+        holder.itemView.setOnClickListener { onClick(item) }
     }
 
     override fun getItemCount(): Int = items.size
