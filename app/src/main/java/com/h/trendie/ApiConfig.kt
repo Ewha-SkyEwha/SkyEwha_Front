@@ -2,7 +2,7 @@ package com.h.trendie
 
 object ApiConfig {
 
-    const val BASE_URL = "https://api.ourteam.com" //팀 서버로 교체
+    const val BASE_URL = "http://10.0.2.2:8000" //팀 서버로 교체
 
     const val PREFS_USER = "user_prefs"           // 토큰
     const val KEY_ACCESS = "accessToken"
