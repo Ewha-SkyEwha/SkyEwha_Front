@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 화면 배경(colorSurface)에 자연스럽게 녹아들도록 -->
+    <solid android:color="@color/colorSurface"/>
+    <corners android:radius="16dp"/>
+    <padding
+        android:left="12dp" android:top="10dp"
+        android:right="12dp" android:bottom="10dp"/>
+</shape>

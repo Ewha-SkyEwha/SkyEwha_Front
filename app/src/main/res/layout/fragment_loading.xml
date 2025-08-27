@@ -11,7 +11,7 @@
         android:scaleType="centerCrop"
         android:contentDescription="배경그림" />
 
-    <!-- 로딩바 + 텍스트-->
+    <!-- 로딩 + 텍스트-->
     <LinearLayout
         android:id="@+id/loadingBox"
         android:layout_width="wrap_content"

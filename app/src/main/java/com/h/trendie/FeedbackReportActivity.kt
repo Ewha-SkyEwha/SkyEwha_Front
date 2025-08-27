@@ -7,20 +7,30 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
+import androidx.core.view.updatePadding
 import androidx.lifecycle.lifecycleScope
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.h.trendie.data.AppDatabase
+import com.h.trendie.data.ProcessKeywordsRequest
+import com.h.trendie.network.ApiClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 
 class FeedbackReportActivity : AppCompatActivity() {
 
@@ -28,10 +38,11 @@ class FeedbackReportActivity : AppCompatActivity() {
     private lateinit var nickname: String
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_feedback_report)
 
-        // 인텐트 데이터 수신
+        // 인텐트
         titleFromUser = intent.getStringExtra("videoTitle").orEmpty()
         nickname = intent.getStringExtra("nickname").orEmpty()
 
@@ -45,83 +56,140 @@ class FeedbackReportActivity : AppCompatActivity() {
 
         val toolbar = findViewById<View>(R.id.fbToolbar)
         val footerActions = findViewById<View>(R.id.footerActions)
-        val tvTitle = toolbar.findViewById<TextView>(R.id.tvTitle)
-        val btnBack = toolbar.findViewById<View>(R.id.btnBack)
+        val tvTitle = toolbar?.findViewById<TextView>(R.id.tvTitle)
+        val btnBack = toolbar?.findViewById<View>(R.id.btnBack)
 
-        // 👇 내역에서 열었는지 여부 체크
+        // 해시태그 리스트
+        val rvTags = findViewById<RecyclerView>(R.id.rvTags)
+        val tagAdapter = SimpleTagAdapter()
+        rvTags?.layoutManager = LinearLayoutManager(this)
+        rvTags?.adapter = tagAdapter
+
+        // ── WindowInsets(★중복 누적 방지: 절대값으로 세팅)
+        if (toolbar != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
+                val top = insets.getInsets(
+                    WindowInsetsCompat.Type.statusBars() or WindowInsetsCompat.Type.displayCutout()
+                ).top
+                v.updatePadding(top = top)
+                insets
+            }
+        }
+        if (footerActions != null) {
+            ViewCompat.setOnApplyWindowInsetsListener(footerActions) { v, insets ->
+                val bottom = insets.getInsets(WindowInsetsCompat.Type.navigationBars()).bottom
+                v.updatePadding(bottom = bottom)
+                insets
+            }
+        }
+
         val hideToolbar = intent.getBooleanExtra("hideToolbar", false)
-
         if (hideToolbar) {
-            // 내역에서 열면: 뒤로가기만 남기고 나머지 숨김
             tvTitle?.visibility = View.GONE
             footerActions?.visibility = View.GONE
             btnBack?.setOnClickListener { finish() }
         } else {
-            // 원래 로직 (업로드 직후 열 때)
             btnBack?.setOnClickListener { finish() }
 
-            // ============================
-            // PDF 저장 버튼 로직
-            // ============================
-            btnSavePdf.setOnClickListener {
+            btnSavePdf?.setOnClickListener {
                 val safeTitle = sanitizeFileName(titleFromUser.ifBlank { "피드백보고서" })
                 val timeTag = SimpleDateFormat("yyyyMMdd_HHmmss", Locale.KOREA).format(Date())
                 val fileName = "Trendie-${safeTitle}-${timeTag}.pdf"
 
                 lifecycleScope.launch {
                     try {
-                        progressOverlay.isVisible = true
-                        val file = withContext(Dispatchers.IO) {
-                            exportViewToPdf(report, fileName)
-                        }
-                        Toast.makeText(
-                            this@FeedbackReportActivity,
-                            "PDF 저장 완료:\n${file.absolutePath}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        progressOverlay?.isVisible = true
+                        val file = withContext(Dispatchers.IO) { exportViewToPdf(report, fileName) }
+                        Toast.makeText(this@FeedbackReportActivity, "PDF 저장 완료:\n${file.absolutePath}", Toast.LENGTH_SHORT).show()
                     } catch (e: Exception) {
-                        Toast.makeText(
-                            this@FeedbackReportActivity,
-                            "PDF 저장 실패: ${e.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(this@FeedbackReportActivity, "PDF 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
                     } finally {
-                        progressOverlay.isVisible = false
+                        progressOverlay?.isVisible = false
                     }
                 }
             }
 
-            // ============================
-            // 내역 저장 버튼 로직
-            // ============================
-            btnSaveHistory.setOnClickListener {
-                it.isEnabled = false
+            btnSaveHistory?.setOnClickListener { btn ->
+                btn.isEnabled = false
                 lifecycleScope.launch {
                     try {
                         val db = AppDatabase.getInstance(this@FeedbackReportActivity)
                         val t = titleFromUser.ifBlank { "피드백 보고서" }
                         val d = SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())
                         db.feedbackHistoryDao().insertSimple(t, d)
-                        Toast.makeText(
-                            this@FeedbackReportActivity,
-                            "내역에 저장되었습니다.",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(this@FeedbackReportActivity, "내역에 저장되었습니다.", Toast.LENGTH_SHORT).show()
                     } catch (e: Exception) {
-                        Toast.makeText(
-                            this@FeedbackReportActivity,
-                            "내역 저장 실패: ${e.message}",
-                            Toast.LENGTH_SHORT
-                        ).show()
+                        Toast.makeText(this@FeedbackReportActivity, "내역 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
                     } finally {
-                        it.isEnabled = true
+                        btn.isEnabled = true
                     }
                 }
             }
         }
+
+        // 업로드에서 전달된 video_id (int/str 모두 대응)
+        val videoIdFromInt = intent.getIntExtra("video_id", -1)
+        val videoIdFromStr = intent.getStringExtra("video_id")?.toIntOrNull() ?: -1
+        val videoId = if (videoIdFromInt > 0) videoIdFromInt else videoIdFromStr
+
+        // 자동 요청 흐름
+        if (videoId > 0) {
+            runKeywordAndHashtagFlow(
+                videoId = videoId,
+                onTags = { tags -> tagAdapter.submit(tags) },
+                progress = progressOverlay
+            )
+        } else {
+            tagAdapter.submit(listOf("영상 ID가 없어 추천 해시태그를 표시할 수 없어요."))
+        }
     }
 
-    // 📌 뷰를 PDF로 변환 후 Downloads에 저장
+    private fun runKeywordAndHashtagFlow(
+        videoId: Int,
+        onTags: (List<String>) -> Unit,
+        progress: View?
+    ) {
+        lifecycleScope.launch {
+            try {
+                progress?.isVisible = true
+
+                // 1) 키워드 처리
+                val processResp = withContext(Dispatchers.IO) {
+                    ApiClient.api.processKeywords(ProcessKeywordsRequest(videoId))
+                }
+                if (!processResp.isSuccessful) {
+                    Toast.makeText(
+                        this@FeedbackReportActivity,
+                        "키워드 처리 실패(${processResp.code()})",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    return@launch
+                }
+
+                // 2) 해시태그 추천
+                val tagsResp = withContext(Dispatchers.IO) {
+                    ApiClient.api.recommendHashtags(videoId)
+                }
+                if (!tagsResp.isSuccessful) {
+                    val msg = if (tagsResp.code() == 404)
+                        "Video not found (404)"
+                    else
+                        "해시태그 불러오기 실패(${tagsResp.code()})"
+                    Toast.makeText(this@FeedbackReportActivity, msg, Toast.LENGTH_SHORT).show()
+                    return@launch
+                }
+
+                val tags = tagsResp.body().orEmpty()
+                onTags(if (tags.isEmpty()) listOf("추천 해시태그가 아직 없어요.") else tags)
+
+            } catch (e: Exception) {
+                Toast.makeText(this@FeedbackReportActivity, "요청 오류: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+            } finally {
+                progress?.isVisible = false
+            }
+        }
+    }
+
     private fun exportViewToPdf(target: View, fileName: String): File {
         val width = target.width.takeIf { it > 0 } ?: resources.displayMetrics.widthPixels
         val specW = View.MeasureSpec.makeMeasureSpec(width, View.MeasureSpec.EXACTLY)
@@ -130,11 +198,7 @@ class FeedbackReportActivity : AppCompatActivity() {
         target.layout(0, 0, target.measuredWidth, target.measuredHeight)
 
         val doc = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(
-            target.measuredWidth,
-            target.measuredHeight,
-            1
-        ).create()
+        val pageInfo = PdfDocument.PageInfo.Builder(target.measuredWidth, target.measuredHeight, 1).create()
         val page = doc.startPage(pageInfo)
         target.draw(page.canvas)
         doc.finishPage(page)
@@ -149,15 +213,11 @@ class FeedbackReportActivity : AppCompatActivity() {
             }
             val uri = resolver.insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, contentValues)
                 ?: throw Exception("MediaStore에 파일 생성 실패")
-
             resolver.openOutputStream(uri).use { out ->
                 if (out == null) throw Exception("OutputStream 열기 실패")
                 doc.writeTo(out)
             }
-            outFile = File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
-                fileName
-            )
+            outFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
         } else {
             val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             if (!dir.exists()) dir.mkdirs()
@@ -169,7 +229,19 @@ class FeedbackReportActivity : AppCompatActivity() {
         return outFile
     }
 
-    private fun sanitizeFileName(name: String): String {
-        return name.replace(Regex("""[\\/:*?"<>|\r\n]+"""), "_").trim('_', ' ')
+    private fun sanitizeFileName(name: String): String =
+        name.replace(Regex("""[\\/:*?"<>|\r\n]+"""), "_").trim('_', ' ')
+
+    // 간단 태그 어댑터
+    private inner class SimpleTagAdapter : RecyclerView.Adapter<SimpleTagAdapter.VH>() {
+        private val items = mutableListOf<String>()
+        fun submit(list: List<String>) { items.clear(); items.addAll(list); notifyDataSetChanged() }
+        inner class VH(view: View) : RecyclerView.ViewHolder(view) { val tv: TextView = view as TextView }
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
+            val tv = TextView(parent.context).apply { setPadding(24, 16, 24, 16); textSize = 15f }
+            return VH(tv)
+        }
+        override fun onBindViewHolder(holder: VH, position: Int) { holder.tv.text = items[position] }
+        override fun getItemCount(): Int = items.size
     }
 }

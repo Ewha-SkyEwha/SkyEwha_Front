@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -12,10 +14,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Trendie"
-        tools:ignore="ExtraText"
-        android:networkSecurityConfig="@xml/network_security_config">
+        android:networkSecurityConfig="@xml/network_security_config"
+        tools:ignore="ExtraText">
 
-        <!-- 앱 시작점 -->
+        <!-- 앱 시작점 (런처) -->
         <activity
             android:name=".SplashActivity"
             android:exported="true">
@@ -25,12 +27,11 @@
             </intent-filter>
         </activity>
 
-        <!-- 로그인 / 초기 플로우 -->
+        <!-- 로그인 / 초기 플로우 (딥링크 콜백 수신) -->
         <activity
             android:name=".LoginActivity"
             android:exported="true"
             android:launchMode="singleTop">
-
             <!-- trendie://oauth/callback -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -41,36 +42,53 @@
                     android:host="oauth"
                     android:path="/callback" />
             </intent-filter>
+
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="YOUR_DOMAIN"
+                    android:path="/oauth/callback" />
+            </intent-filter>
         </activity>
 
-        <activity android:name=".NicknameActivity" android:exported="true"
-                  android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".PreferenceActivity" android:exported="true" />
+        <!-- 최초 가입 플로우 -->
+        <activity
+            android:name=".NicknameActivity"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <activity
+            android:name=".PreferenceActivity"
+            android:exported="false" />
 
         <!-- 닉네임 수정 -->
-        <activity android:name=".NicknameEditActivity" android:exported="true" />
+        <activity
+            android:name=".NicknameEditActivity"
+            android:exported="false" />
 
-        <!-- 메인 화면 (Fragment 탑재용) -->
-        <activity android:name=".MainActivity" android:exported="true" />
+        <!-- 메인 화면 (Fragment 호스팅) -->
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
 
-        <!-- 설정 화면 -->
-        <activity android:name=".SettingsActivity" android:exported="true" />
-
-        <activity android:name=".FeedbackHistoryActivity"
-                  android:exported="true"/>
-
-        <!-- 피드백 업로드 -->
-        <activity android:name=".FeedbackUploadFragment"     android:exported="true"
-            tools:ignore="Instantiatable" />
-
-        <!-- 피드백 기록 -->
-        <activity android:name=".FeedbackReportActivity"  android:exported="true" />
-
-        <!-- 선호도 조사 내역 -->
-        <activity android:name=".PreferenceHistoryActivity"/>
-
-        <!-- 가입 정보 -->
-        <activity android:name=".MemberInfoActivity"/>
+        <!-- 설정/정보/기록 화면들 -->
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FeedbackHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".FeedbackReportActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PreferenceHistoryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".MemberInfoActivity"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"
@@ -83,5 +101,4 @@
         </provider>
 
     </application>
-
 </manifest>

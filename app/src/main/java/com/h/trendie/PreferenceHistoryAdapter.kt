@@ -10,7 +10,6 @@ class PreferenceHistoryAdapter(private val items: List<PreferenceItem>)
     : RecyclerView.Adapter<PreferenceHistoryAdapter.ViewHolder>() {
 
     class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val title = view.findViewById<TextView>(R.id.tvPreferenceTitle)
         val value = view.findViewById<TextView>(R.id.tvPreferenceValue)
     }
 
@@ -21,9 +20,7 @@ class PreferenceHistoryAdapter(private val items: List<PreferenceItem>)
     }
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = items[position]
-        holder.title.text = item.title
-        holder.value.text = item.value
+        holder.value.text = items[position].value
     }
 
     override fun getItemCount() = items.size

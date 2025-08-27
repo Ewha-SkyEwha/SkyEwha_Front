@@ -9,51 +9,57 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.h.trendie.databinding.ActivityLoginBinding
 import okhttp3.*
-import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.MediaType.Companion.toMediaType
+import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONObject
 import java.io.IOException
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityLoginBinding
-    private val client = OkHttpClient()
+    private val client by lazy { OkHttpClient() }
 
-    // 누른 로그인 버튼 기록 (콜백 구분용)
+    // 마지막으로 누른 프로바이더 (콜백 구분용)
     private var lastProvider: String? = null // "kakao" | "google"
 
-    // 브라우저 왕복 중 Activity 재시작 경우 기억 위한 임시 저장소
+    // 브라우저 왕복 대비 (액티비티 재생성 시 복구용)
     private val flowSp by lazy { getSharedPreferences("auth_flow", MODE_PRIVATE) }
+
+    // 딥링크 콜백 중복 방지
+    @Volatile private var handlingCallback: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        // 재시작된 경우 pendingProvider 복구
+        // 재시작 복구
         lastProvider = flowSp.getString("pendingProvider", null)
 
         val googleBtn = findViewById<LinearLayout>(R.id.btnGoogle)
         val kakaoBtn  = findViewById<LinearLayout>(R.id.btnKakao)
 
         googleBtn.setOnClickListener {
+            if (handlingCallback) return@setOnClickListener
             lastProvider = "google"
-            flowSp.edit().putString("pendingProvider", "google").apply() // 저장
+            flowSp.edit().putString("pendingProvider", "google").apply()
             getLoginUrlAndOpen("google")
         }
 
         kakaoBtn.setOnClickListener {
+            if (handlingCallback) return@setOnClickListener
             lastProvider = "kakao"
             flowSp.edit().putString("pendingProvider", "kakao").apply()
             getLoginUrlAndOpen("kakao")
         }
 
-        // 새로 시작&딥링크로 들어온 경우 처리
+        // 앱 시작/재진입 인텐트 처리
         handleAuthIntent(intent)
     }
 
-    /** 1) 서버에서 로그인 URL 받아서 브라우저 열기 */
+    /** 1) 서버에서 로그인 URL 획득 → 브라우저 열기 */
     private fun getLoginUrlAndOpen(provider: String) {
-        Log.d("앱체크", "$provider 로그인 URL 요청 시작!")
+        Log.d("앱체크", "[$provider] login_url 요청")
         val req = Request.Builder()
             .url("${ApiConfig.BASE_URL}/api/v1/auth/$provider/login_url")
             .get()
@@ -61,7 +67,7 @@ class LoginActivity : AppCompatActivity() {
 
         client.newCall(req).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                val body = response.body?.string() ?: ""
+                val body = response.body?.string().orEmpty()
                 if (!response.isSuccessful) {
                     Log.e("앱체크", "[$provider] login_url 실패: ${response.code}, $body")
                     runOnUiThread {
@@ -70,9 +76,9 @@ class LoginActivity : AppCompatActivity() {
                     return
                 }
                 try {
-                    val url = JSONObject(body).optString("login_url", "")
+                    val url = JSONObject(body).optString("login_url").orEmpty()
+                    require(url.isNotBlank())
                     Log.d("앱체크", "[$provider] 로그인 URL: $url")
-                    if (url.isBlank()) throw IllegalStateException("login_url 없음")
                     runOnUiThread { openLoginPage(url) }
                 } catch (e: Exception) {
                     Log.e("앱체크", "[$provider] login_url 파싱 실패: $body", e)
@@ -83,7 +89,7 @@ class LoginActivity : AppCompatActivity() {
             }
 
             override fun onFailure(call: Call, e: IOException) {
-                Log.e("앱체크", "[$provider] onFailure: ${e.message}", e)
+                Log.e("앱체크", "[$provider] login_url onFailure: ${e.message}", e)
                 runOnUiThread {
                     Toast.makeText(this@LoginActivity, "$provider 로그인 URL 요청 실패", Toast.LENGTH_SHORT).show()
                 }
@@ -95,49 +101,66 @@ class LoginActivity : AppCompatActivity() {
         startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
     }
 
-    /** 2) 딥링크 콜백 (redirect_uri로 돌아왔을 때) - 새 인텐트로 들어오는 경우 */
-    override fun onNewIntent(intent: Intent?) {
+    /** 2) 딥링크 콜백: 새 인텐트 */
+    override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
-        setIntent(intent)             // ✅ 인텐트 교체
-        handleAuthIntent(intent)      // ✅ 공통 처리
+        setIntent(intent)
+        handleAuthIntent(intent)
     }
 
-    /** 공통 콜백 처리 (onCreate/onNewIntent 양쪽에서 호출) */
+    /** onCreate/onNewIntent 공통 처리 */
     private fun handleAuthIntent(i: Intent?) {
         val uri = i?.data ?: return
-        Log.d("앱체크", "딥링크 수신 uri=$uri")
-        val code = uri.getQueryParameter("code") ?: run {
-            Log.e("앱체크", "code 파라미터 없음!")
+        if (i.action != Intent.ACTION_VIEW) return
+        if (handlingCallback) return
+
+        Log.d("앱체크", "딥링크 수신: $uri")
+
+        // OAuth 에러
+        uri.getQueryParameter("error")?.let { err ->
+            Log.e("앱체크", "OAuth error: $err")
+            handlingCallback = false
+            flowSp.edit().remove("pendingProvider").apply()
+            Toast.makeText(this, "로그인 실패: $err", Toast.LENGTH_SHORT).show()
             return
         }
 
-        // 버튼 누를 때 기록한 provider 우선, 없으면 저장소 복구, 그래도 없으면 추정
+        val code = uri.getQueryParameter("code") ?: run {
+            Log.e("앱체크", "code 파라미터 없음")
+            return
+        }
+
         val provider = lastProvider
             ?: flowSp.getString("pendingProvider", null)
-            ?: if (uri.toString().contains("google", true)) "google" else "kakao"
+            ?: when {
+                uri.toString().contains("google", true) -> "google"
+                uri.toString().contains("kakao",  true) -> "kakao"
+                else -> "google"
+            }
 
-        // 사용 끝났으면 정리
+        handlingCallback = true
         flowSp.edit().remove("pendingProvider").apply()
-
         Log.d("앱체크", "콜백 수신: provider=$provider, code=$code")
+
         sendLoginCodeToServer(provider, code)
     }
 
-    /** 3) code를 서버에 전달 → 기존/신규 분기 */
+    /** 3) code 서버 전송 → 기존/신규 분기 */
     private fun sendLoginCodeToServer(provider: String, code: String) {
-        val json = JSONObject().apply { put("code", code) }
-        val body = RequestBody.create("application/json; charset=utf-8".toMediaTypeOrNull(), json.toString())
+        val json = JSONObject().apply { put("code", code) }.toString()
+        val body = json.toRequestBody("application/json; charset=utf-8".toMediaType())
         val req = Request.Builder()
-            .url("${ApiConfig.BASE_URL}/api/v1/auth/$provider/login") // 👈 반드시 /login
+            .url("${ApiConfig.BASE_URL}/api/v1/auth/$provider/login")
             .post(body)
             .build()
 
         client.newCall(req).enqueue(object : Callback {
             override fun onResponse(call: Call, response: Response) {
-                val resStr = response.body?.string() ?: ""
+                val resStr = response.body?.string().orEmpty()
                 Log.d("앱체크", "[$provider] /login 응답: $resStr")
 
                 if (!response.isSuccessful) {
+                    handlingCallback = false
                     runOnUiThread {
                         Toast.makeText(this@LoginActivity, "로그인 실패(${response.code})", Toast.LENGTH_SHORT).show()
                     }
@@ -146,51 +169,62 @@ class LoginActivity : AppCompatActivity() {
 
                 try {
                     val jsonRes = JSONObject(resStr)
-                    val isNewUser = jsonRes.optBoolean("isNewUser", jsonRes.isNull("user")) // 두 포맷 모두 대응
+
+                    // 백엔드 응답 양식 여러 케이스 방어
+                    val isNewUser = when {
+                        jsonRes.has("isNewUser") -> jsonRes.optBoolean("isNewUser", false)
+                        jsonRes.isNull("user")   -> true
+                        else                     -> false
+                    }
+
                     if (!isNewUser) {
-                        // 기존 유저
-                        val access = jsonRes.optString("accessToken", "")
+                        // === 기존 유저 → 바로 메인 ===
+                        val access  = jsonRes.optString("accessToken", "")
                         val refresh = jsonRes.optString("refreshToken", "")
-                        val user = jsonRes.optJSONObject("user")
-                        val nickname = user?.optString("nickname") ?: jsonRes.optString("nickname", "")
-                        val email = user?.optString("email") ?: jsonRes.optString("email", "")
+                        val user    = jsonRes.optJSONObject("user")
+                        val email   = user?.optString("email") ?: jsonRes.optString("email", "")
 
                         saveAuth(access, refresh, provider, email)
+
                         runOnUiThread {
-                            val intent = Intent(this@LoginActivity, PreferenceActivity::class.java)
-                            intent.putExtra("nickname", nickname)
-                            intent.putExtra("email", email)
-                            startActivity(intent)
+                            startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                             finish()
                         }
                     } else {
-                        // 신규 유저 → 닉네임 화면
+                        // === 신규 유저 → 닉네임 화면 ===
                         val tempToken = jsonRes.optString("tempToken", "")
-                        val email = jsonRes.optString("email", "")
+                        val email     = jsonRes.optString("email", "")
                         val providerAccess = when (provider) {
                             "google" -> jsonRes.optString("google_access_token", "")
                             else     -> jsonRes.optString("kakao_access_token", "")
                         }
 
                         runOnUiThread {
-                            val i = Intent(this@LoginActivity, NicknameActivity::class.java)
-                            i.putExtra("provider", provider)
-                            i.putExtra("email", email)
-                            i.putExtra("tempToken", tempToken)
-                            i.putExtra("providerAccessToken", providerAccess)
+                            val i = Intent(this@LoginActivity, NicknameActivity::class.java).apply {
+                                putExtra("provider", provider)
+                                putExtra("email", email)
+                                putExtra("tempToken", tempToken)
+                                putExtra("providerAccessToken", providerAccess)
+                            }
                             startActivity(i)
                             finish()
                         }
                     }
                 } catch (e: Exception) {
+                    handlingCallback = false
                     Log.e("앱체크", "[$provider] /login 파싱 실패: $resStr", e)
-                    runOnUiThread { Toast.makeText(this@LoginActivity, "서버 응답 파싱 실패", Toast.LENGTH_SHORT).show() }
+                    runOnUiThread {
+                        Toast.makeText(this@LoginActivity, "서버 응답 파싱 실패", Toast.LENGTH_SHORT).show()
+                    }
                 }
             }
 
             override fun onFailure(call: Call, e: IOException) {
+                handlingCallback = false
                 Log.e("앱체크", "[$provider] /login onFailure: ${e.message}", e)
-                runOnUiThread { Toast.makeText(this@LoginActivity, "로그인 네트워크 오류", Toast.LENGTH_SHORT).show() }
+                runOnUiThread {
+                    Toast.makeText(this@LoginActivity, "로그인 네트워크 오류", Toast.LENGTH_SHORT).show()
+                }
             }
         })
     }

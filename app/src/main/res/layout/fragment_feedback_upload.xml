@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/colorSurface">
 
-    <!-- 공통 상단 로고 -->
+    <!-- 상단 로고 -->
     <com.h.trendie.ui.theme.TrendieLogoBar
         android:id="@+id/logoBar"
         android:layout_width="match_parent"
@@ -19,14 +19,18 @@
         android:layout_weight="1"
         android:orientation="vertical"
         android:gravity="center">
+
+        <!-- ✅ 닉네임을 코드에서 넣을 안내문 -->
         <TextView
+            android:id="@+id/tvGuideUpload"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="유명 님의 영상을 업로드하고\nTRENDIE가 제공하는 피드백 보고서를\n바로 확인해 보세요!"
+            android:text="(닉네임) 님의 영상을 업로드하고\nTRENDIE가 제공하는 피드백 보고서를\n바로 확인해 보세요!"
             android:textSize="20sp"
             android:textColor="@color/colorPrimaryText"
             android:gravity="center"/>
-        <!-- mp4 안내문구 -->
+
+        <!-- 영상 조건 안내문구 -->
         <TextView
             android:id="@+id/tvFormatInfo"
             android:layout_width="match_parent"
@@ -51,7 +55,7 @@
         android:layout_marginEnd="24dp"
         android:inputType="text"/>
 
-    <!-- 허용 문자 안내문구 -->
+    <!-- 허용 문자 안내 -->
     <TextView
         android:id="@+id/tvCharInfo"
         android:layout_width="match_parent"
@@ -63,20 +67,18 @@
         android:layout_marginEnd="24dp"
         android:layout_marginTop="10dp"/>
 
-    <!-- 영상 업로드 버튼 -->
+    <!-- ✅ 하늘색 버튼 -->
     <Button
         android:id="@+id/btnUpload"
         android:text="영상 업로드"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:textStyle="bold"
         android:textColor="@color/colorPrimaryText"
-        android:background="@drawable/rounded_toggle_button"
+        android:background="@drawable/rounded_toggle_skyblue_button"
         android:layout_marginStart="24dp"
         android:layout_marginEnd="24dp"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="30dp"
         android:layout_gravity="center" />
-
 
 </LinearLayout>

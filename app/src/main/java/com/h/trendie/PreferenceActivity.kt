@@ -3,6 +3,7 @@ package com.h.trendie
 import android.content.Intent
 import android.os.Bundle
 import android.graphics.Paint
+import android.util.Log
 import android.widget.Button
 import android.widget.TextView
 import android.widget.ToggleButton
@@ -55,6 +56,7 @@ class PreferenceActivity : AppCompatActivity() {
 
         // “지금은 넘어갈래요”
         nextTime.setOnClickListener {
+            Log.d("Pref", "메인으로 이동 시도")
             startActivity(Intent(this, MainActivity::class.java))
             finish()
         }

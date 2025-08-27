@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorSurface"
@@ -14,9 +15,9 @@
         android:orientation="vertical"
         android:paddingStart="16dp"
         android:paddingEnd="16dp"
-        android:paddingBottom="16dp">
+        android:paddingTop="16dp"
+        android:paddingBottom="24dp">
 
-        <!-- 공통 상단 로고 -->
         <com.h.trendie.ui.theme.TrendieLogoBar
             android:id="@+id/logoBar"
             android:layout_width="match_parent"
@@ -24,53 +25,73 @@
 
         <!-- 섹션: 해시태그 순위 -->
         <TextView
-            android:text="해시태그 순위"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="16dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:text="해시태그 순위"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
 
-        <!-- 막대그래프 (X축 라벨은 차트가 직접 그림) -->
-        <com.github.mikephil.charting.charts.BarChart
-            android:id="@+id/barChartHashtags"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
-            android:layout_height="220dp"
-            android:layout_marginTop="8dp"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:cardUseCompatPadding="true"
+            app:cardElevation="1dp"
+            app:cardCornerRadius="16dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutline">
+
+            <com.github.mikephil.charting.charts.BarChart
+                android:id="@+id/barChartHashtags"
+                android:layout_width="match_parent"
+                android:layout_height="220dp"
+                android:padding="8dp"/>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- 섹션: 급상승 키워드 -->
         <TextView
-            android:text="급상승 키워드"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="24dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="급상승 키워드"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/rvRising"
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:nestedScrollingEnabled="false"
-            android:overScrollMode="never"
-            android:layout_marginTop="8dp"/>
+            android:layout_marginTop="8dp"
+            app:cardElevation="0dp"
+            app:cardCornerRadius="16dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutline">
+
+            <!-- 👇 ChipGroup -> RecyclerView로 교체 -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvRising"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="12dp"
+                android:clipToPadding="false"
+                android:nestedScrollingEnabled="false"/>
+        </com.google.android.material.card.MaterialCardView>
 
         <!-- 섹션: 인기 동영상 -->
         <TextView
-            android:text="인기 동영상"
-            android:textStyle="bold"
-            android:textSize="18sp"
-            android:layout_marginTop="24dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:text="인기 동영상"
+            android:textSize="18sp"
+            android:textStyle="bold"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvVideos"
             android:layout_width="match_parent"
-            android:layout_height="160dp"
-            android:nestedScrollingEnabled="false"
+            android:layout_height="180dp"
+            android:layout_marginTop="8dp"
             android:overScrollMode="never"
-            android:layout_marginTop="8dp"/>
-
+            android:nestedScrollingEnabled="false"/>
     </LinearLayout>
 </androidx.core.widget.NestedScrollView>

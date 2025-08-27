@@ -8,7 +8,7 @@
     <string name="back">뒤로가기</string>
     <string name="title_settings">설정</string>
     <string name="title_preference_history">선호도 조사 내역</string>
-    <string name="title_feedback_history">보고서 피드백 내역</string>
+    <string name="title_feedback_history">피드백 보고서 내역</string>
     <string name="title_member_info">회원정보관리</string>
     <string name="terms">이용약관</string>
     <string name="notice">공지사항</string>
@@ -18,4 +18,6 @@
     <string name="dark_mode">다크모드</string>
     <string name="light_mode">라이트모드</string>
     <string name="logout">로그아웃</string>
+    <string name="label_no_linked_account">연동 계정 없음</string>
+
 </resources>

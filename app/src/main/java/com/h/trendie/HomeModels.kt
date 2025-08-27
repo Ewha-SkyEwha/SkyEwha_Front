@@ -1,17 +1,29 @@
-package com.h.trendie
+// app/src/main/java/com/h/trendie/HomeModels.kt
+package com.h.trendie.model
 
-data class HashtagRank(val tag: String, val count: Int, val rank: Int)
+// ✅ 여기엔 VideoItem 선언하지 마세요 (삭제!)
+
+/** 해시태그 집계 */
+data class HashtagRank(
+    val tag: String,
+    val count: Int,
+    val rank: Int
+)
+
+/** 급상승 키워드 카드용 */
 data class RisingKeyword(
     val keyword: String,
-    val rank: Int,          // 이번주 순위
-    val count: Int,         // 이번주 언급량
-    val growthRate: Float,  // 전주 대비 %
-    val rankChange: Int = 0 // 기존 필드 유지용 (UI 사용x)
+    val rank: Int,
+    val count: Int,
+    val growthRate: Float,
+    val rankChange: Int = 0,
+    val delta: Int? = null
 )
-data class VideoItem(val id: String, val title: String, val thumbnailUrl: String)
+
+/** 홈 탭 스냅샷 */
 data class HomeSnapshot(
     val weekStart: Long,
     val hashtagsTop10: List<HashtagRank>,
     val risingTop10: List<RisingKeyword>,
-    val popularVideos: List<VideoItem>
+    val popularVideos: List<VideoItem> // ← model/VideoItem.kt의 VideoItem
 )
