@@ -11,7 +11,6 @@ import retrofit2.http.Part
 import retrofit2.http.Path
 import retrofit2.http.Body
 
-/** 업로드 응답 */
 data class UploadResponse(
     val success: Boolean,
     val url: String? = null,
@@ -21,13 +20,12 @@ data class UploadResponse(
     val user_id: String? = null
 )
 
-/** 키워드 처리 요청/응답 */
 data class ProcessKeywordsRequest(val video_id: Int)
 data class ProcessKeywordsResponse(val message: String)
 
 interface ApiService {
 
-    /** ✅ 서버와 일치: POST /api/v1/video/upload_video (multipart) */
+    /** 업로드 (서버와 일치: POST /api/v1/video/upload_video) */
     @Multipart
     @POST("api/v1/video/upload_video")
     suspend fun uploadVideo(
@@ -35,10 +33,11 @@ interface ApiService {
         @Part("title") title: RequestBody    // part name: "title"
     ): Response<UploadResponse>
 
-    interface ApiService {
-        @POST("/api/v1/videos/search_by_keywords")
-        suspend fun searchVideos(@Body body: Map<String, List<String>>): Response<VideoSearchResponse>
-    }
+    /** (서버가 이 이름이면 이렇게) 프리서치 */
+    @POST("api/v1/youtube/presearch")
+    suspend fun searchVideos(
+        @Body body: Map<String, List<String>> // {"keywords": ["..."]}
+    ): Response<VideoSearchResponse>
 
     /** 키워드 추출 */
     @POST("api/v1/keyword/process_keywords")

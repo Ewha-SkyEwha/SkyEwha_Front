@@ -7,27 +7,19 @@
         <item name="colorSurface">@color/colorSurface</item>
         <item name="android:colorBackground">@color/colorBackground</item>
 
-        <!-- ✅ 버튼/핵심 포인트 컬러 (하늘색) -->
+        <!-- 버튼/핵심 포인트 컬러 -->
         <item name="colorPrimary">@color/colorAccent</item>
         <item name="colorOnPrimary">@android:color/white</item>
 
-        <!-- (선택) 컨테이너 톤 통일 -->
+        <!-- 컨테이너 톤 -->
         <item name="colorPrimaryContainer">@color/colorBannerBg</item>
         <item name="colorOnPrimaryContainer">@color/colorPointText</item>
 
-        <!-- 아웃라인(카드 테두리 등) -->
+        <!-- 아웃라인 -->
         <item name="colorOutline">@color/colorDivider</item>
 
-        <!-- ❗ 전역 텍스트 컬러는 권장 X: 개별 위젯/스타일에서 관리 -->
-        <!-- <item name="android:textColor">@color/colorPrimaryText</item> -->
-
-        <!-- 카드 기본 스타일(선택) -->
+        <!-- 카드 기본 스타일 적용 -->
         <item name="materialCardViewStyle">@style/Widget.Trendie.MaterialCardView</item>
-    </style>
-
-    <style name="Widget.Trendie.MaterialCardView" parent="Widget.Material3.CardView.Filled">
-        <item name="strokeWidth">0dp</item>
-        <item name="cardUseCompatPadding">true</item>
     </style>
 
 </resources>

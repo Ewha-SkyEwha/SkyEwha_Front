@@ -50,7 +50,8 @@ class KeywordFragment : Fragment(R.layout.fragment_keyword) {
 
             parentFragmentManager.commit {
                 setReorderingAllowed(true)
-                replace(containerId, KeywordResultFragment.newInstance(keyword))
+                hide(this@KeywordFragment)
+                add(containerId, KeywordResultFragment.newInstance(keyword), "keyword_result")
                 addToBackStack("keyword_result")
             }
         }

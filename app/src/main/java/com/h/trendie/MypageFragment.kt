@@ -21,12 +21,23 @@ import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import android.content.Context.MODE_PRIVATE
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import kotlinx.coroutines.launch
+import com.h.trendie.data.UserPrefs
 
 class MypageFragment : Fragment(R.layout.fragment_mypage) {
 
     private val spName = "user_prefs"
     private val keyPhoto = "profile_image_uri"
     private val keyUsePersonDefault = "use_person_icon" // 기본 아이콘 선택 여부 저장
+
+    private var tvName: TextView? = null
+    private var tvJoinDate: TextView? = null
+    private var ivProfile: ImageView? = null
+    private lateinit var prefs: SharedPreferences
+    private var installTs: Long = -1L
 
     // 1) 갤러리/포토피커
     private val pickPhoto = registerForActivityResult(
@@ -42,12 +53,10 @@ class MypageFragment : Fragment(R.layout.fragment_mypage) {
                 val outUri = UCrop.getOutput(result.data!!)
                 outUri?.let { cropped ->
                     // 저장
-                    val prefs = requireContext().getSharedPreferences(spName, MODE_PRIVATE)
                     prefs.edit().putString(keyPhoto, cropped.toString()).apply()
                     // 화면 반영
-                    val img = view?.findViewById<ImageView>(R.id.profileImage)
                     val fallback = resolveFallbackIcon(prefs)
-                    img?.load(cropped) {
+                    ivProfile?.load(cropped) {
                         crossfade(true)
                         placeholder(fallback)
                         error(fallback)
@@ -71,64 +80,73 @@ class MypageFragment : Fragment(R.layout.fragment_mypage) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        // 상태바 인셋 처리(유틸 있으면)
+        // 상태바 인셋 처리(유틸)
         view.findViewById<View>(R.id.mypageToolbar)?.applyTopInsetPadding()
+
+        // ✅ 멤버에 할당 (지역변수로 새로 만들지 않기!)
+        tvName     = view.findViewById(R.id.profileName)
+        tvJoinDate = view.findViewById(R.id.joinDate)
+        ivProfile  = view.findViewById(R.id.profileImage)
 
         // 설정 진입
         view.findViewById<View>(R.id.btnSettings)?.setOnClickListener {
             startActivity(Intent(requireContext(), SettingsActivity::class.java))
         }
 
-        val ctx = requireContext()
-        val prefs = ctx.getSharedPreferences(spName, MODE_PRIVATE)
-
-        // 닉네임
-        val nickname = prefs.getString("nickname", "유저") ?: "유저"
-        view.findViewById<TextView>(R.id.profileName)?.text = nickname
+        prefs = requireContext().getSharedPreferences(spName, MODE_PRIVATE)
 
         // 가입일 (최초 저장)
-        var installTs = prefs.getLong("install_date", -1L)
+        installTs = prefs.getLong("install_date", -1L)
         if (installTs <= 0L) {
             installTs = System.currentTimeMillis()
             prefs.edit().putLong("install_date", installTs).apply()
         }
-        val dateStr = SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA).format(Date(installTs))
-        view.findViewById<TextView>(R.id.joinDate)?.text =
-            "${nickname}님과 Trendie는\n${dateStr}부터 함께했어요!"
 
-        // 프로필 이미지
-        val ivProfile = view.findViewById<ImageView>(R.id.profileImage)
-        loadProfileImage(ivProfile, prefs)
+        // 프로필 이미지 초기 반영
+        ivProfile?.let { loadProfileImage(it, prefs) }
 
-        ivProfile.setOnClickListener {
-            // 갤러리에서 사진 선택
+        ivProfile?.setOnClickListener {
             pickPhoto.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
         }
-        ivProfile.setOnLongClickListener {
-            // 옵션(기본 아이콘/사진 제거)
-            showProfileOptions(ivProfile, prefs)
+        ivProfile?.setOnLongClickListener {
+            showProfileOptions(ivProfile!!, prefs)
             true
         }
 
         // 닉네임 수정
         view.findViewById<ImageView>(R.id.editNickname)?.setOnClickListener {
-            startActivity(Intent(ctx, NicknameEditActivity::class.java))
+            startActivity(Intent(requireContext(), NicknameEditActivity::class.java))
         }
 
         // 회원 정보 관리
         view.findViewById<TextView>(R.id.tvMemberInfo)?.setOnClickListener {
-            startActivity(Intent(ctx, MemberInfoActivity::class.java))
+            startActivity(Intent(requireContext(), MemberInfoActivity::class.java))
         }
 
         // 피드백 보고서 내역
         view.findViewById<TextView>(R.id.tvFeedbackHistory)?.setOnClickListener {
-            startActivity(Intent(ctx, FeedbackHistoryActivity::class.java))
+            startActivity(Intent(requireContext(), FeedbackHistoryActivity::class.java))
         }
 
         // 선호도 조사 내역
         view.findViewById<TextView>(R.id.tvPreferenceHistory)?.setOnClickListener {
-            startActivity(Intent(ctx, PreferenceHistoryActivity::class.java))
+            startActivity(Intent(requireContext(), PreferenceHistoryActivity::class.java))
         }
+
+        // ✅ DataStore(닉네임) 실시간 반영 — 처음 진입/처음 설정 직후 모두 즉시 갱신됨
+        viewLifecycleOwner.lifecycleScope.launch {
+            viewLifecycleOwner.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                UserPrefs.nicknameFlow(requireContext()).collect { name ->
+                    updateNicknameUI(name)
+                }
+            }
+        }
+    }
+
+    private fun updateNicknameUI(name: String) {
+        tvName?.text = name
+        val dateStr = SimpleDateFormat("yyyy년 MM월 dd일", Locale.KOREA).format(Date(installTs))
+        tvJoinDate?.text = "${name}님과 Trendie는\n${dateStr}부터 함께했어요!"
     }
 
     /** 현재 설정에 맞는 기본 아이콘 리소스 결정 (ic_person 없으면 자동 폴백) */
@@ -172,26 +190,19 @@ class MypageFragment : Fragment(R.layout.fragment_mypage) {
         AlertDialog.Builder(requireContext())
             .setItems(items) { _, which ->
                 when {
-                    // 사진 선택 → 선택 후 uCrop 화면으로 이동
                     which == 0 -> pickPhoto.launch(
                         PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                     )
-
-                    // 기본: 로고
                     which == 1 -> {
                         prefs.edit().putBoolean(keyUsePersonDefault, false).apply()
                         prefs.edit().remove(keyPhoto).apply()
                         loadProfileImage(img, prefs)
                     }
-
-                    // 기본: 사람 (아이콘이 있을 때만)
                     hasPerson && which == 2 -> {
                         prefs.edit().putBoolean(keyUsePersonDefault, true).apply()
                         prefs.edit().remove(keyPhoto).apply()
                         loadProfileImage(img, prefs)
                     }
-
-                    // 사진 제거
                     (!hasPerson && which == 2) || (hasPerson && which == 3) -> {
                         prefs.edit().remove(keyPhoto).apply()
                         loadProfileImage(img, prefs)

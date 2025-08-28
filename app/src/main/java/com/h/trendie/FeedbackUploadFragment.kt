@@ -97,7 +97,7 @@ class FeedbackUploadFragment : Fragment(R.layout.fragment_feedback_upload) {
 
                 // 서버 엔드포인트: /api/v1/feedback/upload (프로젝트에 맞게)
                 val resp: Response<UploadResponse> = withContext(Dispatchers.IO) {
-                    ApiClient.api.uploadVideo(filePart, titlePart)
+                    ApiClient.apiService.uploadVideo(filePart, titlePart)
                 }
 
                 if (resp.isSuccessful) {

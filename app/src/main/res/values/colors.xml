@@ -15,4 +15,7 @@
     <color name="chart_bar_first">#3F618C</color>
     <color name="chart_bar_default">#9FBCDB</color>
     <color name="brand_logo">#9FBCDB</color>
+    <color name="colorInputBg">#F1F3F5</color>
+    <color name="colorInputStroke">#D0D7DE</color>
+    <color name="colorInputHint">#6B7280</color>
 </resources>

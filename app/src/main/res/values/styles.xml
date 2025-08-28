@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!-- TextInputLayout 공통 스타일 -->
+    <style name="TrendieTextField" parent="Widget.MaterialComponents.TextInputLayout.FilledBox">
+        <item name="boxBackgroundMode">filled</item>
+        <item name="boxCornerRadiusTopStart">14dp</item>
+        <item name="boxCornerRadiusTopEnd">14dp</item>
+        <item name="boxCornerRadiusBottomStart">14dp</item>
+        <item name="boxCornerRadiusBottomEnd">14dp</item>
+        <item name="boxBackgroundColor">@color/colorInputBg</item>
+        <item name="boxStrokeColor">@color/colorInputStroke</item>
+        <item name="hintTextColor">@color/colorInputHint</item>
+        <item name="startIconTint">@color/colorPrimaryText</item>
+        <item name="endIconTint">@color/colorPrimaryText</item>
+    </style>
+
+    <!-- TextInputEditText 공통 스타일 -->
+    <style name="TrendieEditText" parent="Widget.MaterialComponents.TextInputEditText.FilledBox">
+        <item name="android:textColor">@color/colorPrimaryText</item>
+        <item name="android:textCursorDrawable">@null</item>
+        <item name="android:paddingStart">14dp</item>
+        <item name="android:paddingEnd">14dp</item>
+    </style>
+
+    <!-- 카드 공통 스타일 (테마에서 참조) -->
+    <style name="Widget.Trendie.MaterialCardView" parent="Widget.Material3.CardView.Filled">
+        <item name="strokeWidth">0dp</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+
+</resources>

@@ -27,6 +27,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.google.android.material.card.MaterialCardView
 import com.h.trendie.model.HomeSnapshot
+import com.h.trendie.network.ApiClient
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -35,8 +36,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     private val vm by viewModels<HomeViewModel> {
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
-            override fun <T : ViewModel> create(c: Class<T>): T {
-                return HomeViewModel(MockHomeRepository()) as T   // ← 인자 제거
+            override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                return HomeViewModel(com.h.trendie.MockHomeRepository()) as T
             }
         }
     }
@@ -55,6 +56,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         rvRising = v.findViewById(R.id.rvRising)
         barChart = v.findViewById(R.id.barChartHashtags)
         chartCard = (barChart.parent as? MaterialCardView)
+
+        barChart.renderer = RoundedBarChartRenderer(
+            barChart,
+            barChart.animator,
+            barChart.viewPortHandler
+        )
 
         // ----- 급상승 키워드(그리드) -----
         risingAdapter = KeywordRisingAdapter()
@@ -75,7 +82,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 Toast.makeText(requireContext(), "영상 URL이 없어요.", Toast.LENGTH_SHORT).show()
             }
         }
-        v.findViewById<RecyclerView>(R.id.rvVideos).apply {     // ← 빠져있던 연결 복구
+        v.findViewById<RecyclerView>(R.id.rvVideos).apply {
             layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
             adapter = videosAdapter
             itemAnimator = null
@@ -94,6 +101,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     }
 
     private fun bind(snap: HomeSnapshot) {
+
+        val txt = safeColor(R.color.colorPrimaryText, Color.DKGRAY)
+        val grid = safeColor(R.color.colorGrey, 0xFF9E9E9E.toInt())
+
         // ---------- 해시태그 차트 ----------
         val items = snap.hashtagsTop10.orEmpty()
         if (items.isEmpty()) {
@@ -114,7 +125,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 colors = barColors
                 setDrawValues(true)
                 valueTextSize = 10f
-                setValueTextColors(items.mapIndexed { i, _ -> if (i == topIndex) first else Color.DKGRAY })
+                val txt = safeColor(R.color.colorPrimaryText, Color.DKGRAY)
+                setValueTextColors(items.mapIndexed { i, _ -> if (i == topIndex) first else txt })
+
                 valueFormatter = object : ValueFormatter() {
                     override fun getBarLabel(e: BarEntry?): String {
                         if (e == null) return ""
@@ -139,6 +152,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 val labels2 = items.map { wrapLabel2Lines(it.tag ?: "", maxPerLine = 6) }
 
                 xAxis.apply {
+                    textColor = txt
+                    axisLineColor = grid
                     position = XAxis.XAxisPosition.BOTTOM
                     setDrawGridLines(false)
                     granularity = 1f
@@ -150,6 +165,12 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                     axisMinimum = -0.5f
                     axisMaximum = items.size - 0.5f
                     valueFormatter = IndexAxisValueFormatter(labels2)
+                }
+
+                axisLeft.apply {
+                    textColor = txt
+                    axisLineColor = grid
+                    gridColor = grid
                 }
 
                 setDragEnabled(items.size > 5)

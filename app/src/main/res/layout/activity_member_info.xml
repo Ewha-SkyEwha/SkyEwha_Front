@@ -103,7 +103,7 @@
 
             <!-- 회원탈퇴 (클릭 가능 + 리플) -->
             <TextView
-                android:id="@+id/tvWithdraw"
+                android:id="@+id/btnDeleteAccount"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:gravity="center_vertical"

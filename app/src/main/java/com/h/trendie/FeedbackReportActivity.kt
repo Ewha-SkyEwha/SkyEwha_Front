@@ -22,10 +22,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.h.trendie.data.AppDatabase
 import com.h.trendie.data.ProcessKeywordsRequest
+import com.h.trendie.data.ProcessKeywordsResponse
 import com.h.trendie.network.ApiClient
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import retrofit2.Response
 import java.io.File
 import java.io.FileOutputStream
 import java.text.SimpleDateFormat
@@ -65,7 +67,7 @@ class FeedbackReportActivity : AppCompatActivity() {
         rvTags?.layoutManager = LinearLayoutManager(this)
         rvTags?.adapter = tagAdapter
 
-        // ── WindowInsets(★중복 누적 방지: 절대값으로 세팅)
+        // WindowInsets
         if (toolbar != null) {
             ViewCompat.setOnApplyWindowInsetsListener(toolbar) { v, insets ->
                 val top = insets.getInsets(
@@ -100,9 +102,17 @@ class FeedbackReportActivity : AppCompatActivity() {
                     try {
                         progressOverlay?.isVisible = true
                         val file = withContext(Dispatchers.IO) { exportViewToPdf(report, fileName) }
-                        Toast.makeText(this@FeedbackReportActivity, "PDF 저장 완료:\n${file.absolutePath}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@FeedbackReportActivity,
+                            "PDF 저장 완료:\n${file.absolutePath}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } catch (e: Exception) {
-                        Toast.makeText(this@FeedbackReportActivity, "PDF 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@FeedbackReportActivity,
+                            "PDF 저장 실패: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } finally {
                         progressOverlay?.isVisible = false
                     }
@@ -117,9 +127,17 @@ class FeedbackReportActivity : AppCompatActivity() {
                         val t = titleFromUser.ifBlank { "피드백 보고서" }
                         val d = SimpleDateFormat("yyyy.MM.dd", Locale.KOREA).format(Date())
                         db.feedbackHistoryDao().insertSimple(t, d)
-                        Toast.makeText(this@FeedbackReportActivity, "내역에 저장되었습니다.", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@FeedbackReportActivity,
+                            "내역에 저장되었습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } catch (e: Exception) {
-                        Toast.makeText(this@FeedbackReportActivity, "내역 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(
+                            this@FeedbackReportActivity,
+                            "내역 저장 실패: ${e.message}",
+                            Toast.LENGTH_SHORT
+                        ).show()
                     } finally {
                         btn.isEnabled = true
                     }
@@ -127,7 +145,7 @@ class FeedbackReportActivity : AppCompatActivity() {
             }
         }
 
-        // 업로드에서 전달된 video_id (int/str 모두 대응)
+        // 업로드에서 전달된 video_id
         val videoIdFromInt = intent.getIntExtra("video_id", -1)
         val videoIdFromStr = intent.getStringExtra("video_id")?.toIntOrNull() ?: -1
         val videoId = if (videoIdFromInt > 0) videoIdFromInt else videoIdFromStr
@@ -154,8 +172,8 @@ class FeedbackReportActivity : AppCompatActivity() {
                 progress?.isVisible = true
 
                 // 1) 키워드 처리
-                val processResp = withContext(Dispatchers.IO) {
-                    ApiClient.api.processKeywords(ProcessKeywordsRequest(videoId))
+                val processResp: Response<ProcessKeywordsResponse> = withContext(Dispatchers.IO) {
+                    ApiClient.apiService.processKeywords(ProcessKeywordsRequest(videoId))
                 }
                 if (!processResp.isSuccessful) {
                     Toast.makeText(
@@ -167,8 +185,8 @@ class FeedbackReportActivity : AppCompatActivity() {
                 }
 
                 // 2) 해시태그 추천
-                val tagsResp = withContext(Dispatchers.IO) {
-                    ApiClient.api.recommendHashtags(videoId)
+                val tagsResp: Response<List<String>> = withContext(Dispatchers.IO) {
+                    ApiClient.apiService.recommendHashtags(videoId)
                 }
                 if (!tagsResp.isSuccessful) {
                     val msg = if (tagsResp.code() == 404)
@@ -179,11 +197,15 @@ class FeedbackReportActivity : AppCompatActivity() {
                     return@launch
                 }
 
-                val tags = tagsResp.body().orEmpty()
+                val tags: List<String> = tagsResp.body().orEmpty()
                 onTags(if (tags.isEmpty()) listOf("추천 해시태그가 아직 없어요.") else tags)
 
             } catch (e: Exception) {
-                Toast.makeText(this@FeedbackReportActivity, "요청 오류: ${e.localizedMessage}", Toast.LENGTH_LONG).show()
+                Toast.makeText(
+                    this@FeedbackReportActivity,
+                    "요청 오류: ${e.localizedMessage}",
+                    Toast.LENGTH_LONG
+                ).show()
             } finally {
                 progress?.isVisible = false
             }
@@ -198,7 +220,8 @@ class FeedbackReportActivity : AppCompatActivity() {
         target.layout(0, 0, target.measuredWidth, target.measuredHeight)
 
         val doc = PdfDocument()
-        val pageInfo = PdfDocument.PageInfo.Builder(target.measuredWidth, target.measuredHeight, 1).create()
+        val pageInfo =
+            PdfDocument.PageInfo.Builder(target.measuredWidth, target.measuredHeight, 1).create()
         val page = doc.startPage(pageInfo)
         target.draw(page.canvas)
         doc.finishPage(page)
@@ -217,7 +240,8 @@ class FeedbackReportActivity : AppCompatActivity() {
                 if (out == null) throw Exception("OutputStream 열기 실패")
                 doc.writeTo(out)
             }
-            outFile = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
+            outFile =
+                File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), fileName)
         } else {
             val dir = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
             if (!dir.exists()) dir.mkdirs()
@@ -235,13 +259,25 @@ class FeedbackReportActivity : AppCompatActivity() {
     // 간단 태그 어댑터
     private inner class SimpleTagAdapter : RecyclerView.Adapter<SimpleTagAdapter.VH>() {
         private val items = mutableListOf<String>()
-        fun submit(list: List<String>) { items.clear(); items.addAll(list); notifyDataSetChanged() }
-        inner class VH(view: View) : RecyclerView.ViewHolder(view) { val tv: TextView = view as TextView }
+        fun submit(list: List<String>) {
+            items.clear(); items.addAll(list); notifyDataSetChanged()
+        }
+
+        inner class VH(view: View) : RecyclerView.ViewHolder(view) {
+            val tv: TextView = view as TextView
+        }
+
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
-            val tv = TextView(parent.context).apply { setPadding(24, 16, 24, 16); textSize = 15f }
+            val tv = TextView(parent.context).apply {
+                setPadding(24, 16, 24, 16); textSize = 15f
+            }
             return VH(tv)
         }
-        override fun onBindViewHolder(holder: VH, position: Int) { holder.tv.text = items[position] }
+
+        override fun onBindViewHolder(holder: VH, position: Int) {
+            holder.tv.text = items[position]
+        }
+
         override fun getItemCount(): Int = items.size
     }
 }

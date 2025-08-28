@@ -10,12 +10,12 @@ import retrofit2.converter.moshi.MoshiConverterFactory
 import java.util.concurrent.TimeUnit
 
 object ApiClient {
-    // 로컬 서버
-    private const val BASE_URL = "http://10.0.2.2:8000/"
+    // 로컬 서버 (반드시 슬래시(/)로 끝나야 함)
+    private const val BASE_URL = "http://10.0.2.2:8000/"   // 포트번호 있으면 꼭 붙이기
 
     private val client: OkHttpClient by lazy {
         val logging = HttpLoggingInterceptor().apply {
-            // 업로드 바디까지 찍히면 로그가 매우 길어질 수 있음. 필요시 BASIC/HEADERS 로 낮추세요.
+            // 필요시 BASIC/HEADERS로 낮추rl
             level = HttpLoggingInterceptor.Level.BODY
         }
         OkHttpClient.Builder()
@@ -36,18 +36,19 @@ object ApiClient {
 
     private val retrofit: Retrofit by lazy {
         Retrofit.Builder()
-            .baseUrl(BASE_URL)                    // 반드시 슬래시로 끝남
+            .baseUrl(BASE_URL)  // <-- 반드시 / 로 끝나야 함
             .client(client)
             .addConverterFactory(MoshiConverterFactory.create(moshi))
             .build()
     }
 
-    // 있으면 유지, 없으면 삭제해도 됨
+    // 필요하다면 유지
     val youtubeApi: YoutubeApi by lazy {
         retrofit.create(YoutubeApi::class.java)
     }
 
-    val api: ApiService by lazy {
+    // ApiService 구현체
+    val apiService: ApiService by lazy {
         retrofit.create(ApiService::class.java)
     }
 }

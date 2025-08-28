@@ -45,6 +45,11 @@ android {
 }
 
 dependencies {
+
+    implementation("androidx.core:core-ktx:1.13.1")
+    implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.activity:activity-ktx:1.9.2")
+
     // 그래프/차트
     implementation("com.github.PhilJay:MPAndroidChart:v3.1.0")
 
@@ -65,7 +70,11 @@ dependencies {
     implementation("com.squareup.retrofit2:converter-moshi:2.11.0")
     implementation("com.squareup.moshi:moshi-kotlin:1.15.1")
 
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
+
+    implementation("androidx.security:security-crypto:1.1.0-alpha06")
 
     // Room (DB) — ksp
     implementation("androidx.room:room-runtime:2.6.1")
@@ -108,5 +117,7 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     implementation ("com.github.bumptech.glide:glide:4.16.0")
+
+    implementation("androidx.datastore:datastore-preferences:1.1.1")
 
 }

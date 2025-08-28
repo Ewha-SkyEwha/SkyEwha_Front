@@ -14,6 +14,9 @@ import okhttp3.Request
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.IOException
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.updatePadding
 
 class SettingsActivity : AppCompatActivity() {
 
@@ -58,7 +61,7 @@ class SettingsActivity : AppCompatActivity() {
         }
 
         // 로그아웃
-        findViewById<TextView>(R.id.tvLogout).setOnClickListener {
+        findViewById<TextView>(R.id.btnLogout).setOnClickListener {
             val userSp = getSharedPreferences(ApiConfig.PREFS_USER, MODE_PRIVATE)
             val provider = userSp.getString(ApiConfig.KEY_PROVIDER, null) // "kakao" | "google"
 
@@ -89,6 +92,18 @@ class SettingsActivity : AppCompatActivity() {
                     runOnUiThread { clearAndGoLogin() }
                 }
             })
+        }
+
+        val root = findViewById<View>(R.id.rootSettings)
+        ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
+            val sys = insets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or
+                        WindowInsetsCompat.Type.displayCutout() or
+                        WindowInsetsCompat.Type.systemGestures()
+            )
+            val extra = (16 * resources.displayMetrics.density).toInt()
+            v.updatePadding(bottom = maxOf(v.paddingBottom, sys.bottom + extra))
+            insets
         }
     }
 }

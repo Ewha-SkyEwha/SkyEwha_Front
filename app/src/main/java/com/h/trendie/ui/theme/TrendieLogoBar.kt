@@ -18,10 +18,12 @@ class TrendieLogoBar @JvmOverloads constructor(
     init {
         LayoutInflater.from(context).inflate(R.layout.view_trendie_logo_bar, this, true)
 
-        // 상태바(노치/펀치홀 포함) 높이만큼 자동 패딩 → 잘림/터치 막힘 방지
         ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
-            val top = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
-            v.updatePadding(top = top + v.paddingTop)
+            val topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top
+            val baseTop = (v.getTag(R.id.tag_initial_padding_top) as? Int) ?: v.paddingTop.also {
+                v.setTag(R.id.tag_initial_padding_top, it)
+            }   //패딩 누적 방지
+            v.updatePadding(top = baseTop + topInset)
             insets
         }
         requestApplyInsets()
