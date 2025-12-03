@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/pageRoot"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/colorSurface">
+
+    <!-- 헤더 -->
+    <include
+        android:id="@+id/header"
+        layout="@layout/include_trendie_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <!-- 중앙 안내문: 헤더 ~ 하단 입력 사이 수직 중앙 -->
+    <LinearLayout
+        android:id="@+id/centerGuide"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:paddingStart="@dimen/page_pad_h"
+        android:paddingEnd="@dimen/page_pad_h"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/bottomArea"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:id="@+id/tvGuideUpload"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="제작하신 영상의\n자막 전문을 입력해 주세요!"
+            android:textSize="20sp"
+            android:textColor="@color/colorPrimaryText"
+            android:gravity="center" />
+
+    </LinearLayout>
+
+    <!-- 하단 입력 -->
+    <LinearLayout
+        android:id="@+id/bottomArea"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/page_pad_h"
+        android:paddingEnd="@dimen/page_pad_h"
+        android:paddingBottom="@dimen/page_bottom_gap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
+
+        <!-- 텍스트 입력 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilTitle"
+            style="@style/TrendieTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="텍스트 입력"
+            app:helperTextEnabled="false">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFeedbackTitle"
+                style="@style/TrendieEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUpload"
+            style="@style/TrendieCtaButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="자막 업로드"
+            android:textColor="@color/colorIndigo"
+            android:layout_marginTop="@dimen/field_gap"
+            android:layout_marginBottom="@dimen/field_gap"/>
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

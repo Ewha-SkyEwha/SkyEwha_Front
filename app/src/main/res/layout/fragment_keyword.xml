@@ -1,26 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/rootKeyword"
-    android:orientation="vertical"
+    android:id="@+id/pageRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorSurface">
 
-    <com.h.trendie.ui.theme.TrendieLogoBar
-        android:id="@+id/logoBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <!-- 헤더 -->
+    <include
+        android:id="@+id/header"
+        layout="@layout/include_trendie_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
 
-    <!-- 안내문 -->
+    <!-- 중앙 안내문 -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/centerGuide"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:orientation="vertical"
         android:gravity="center"
-        android:padding="24dp"
-        android:orientation="vertical">
+        android:paddingStart="@dimen/page_pad_h"
+        android:paddingEnd="@dimen/page_pad_h"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/bottomArea"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <TextView
             android:id="@+id/tvKeywordGuide"
@@ -32,45 +41,57 @@
             android:gravity="center"/>
     </LinearLayout>
 
-    <!-- 입력 -->
+    <!--하단 입력-->
     <LinearLayout
-        android:id="@+id/bottomInput"
-        android:layout_width="match_parent"
+        android:id="@+id/bottomArea"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:paddingStart="24dp"
-        android:paddingEnd="24dp"
-        android:paddingBottom="24dp">
+        android:paddingStart="@dimen/page_pad_h"
+        android:paddingEnd="@dimen/page_pad_h"
+        android:paddingBottom="@dimen/page_bottom_gap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
+        <!-- 헬퍼 -->
+        <TextView
+            android:id="@+id/tvKeywordHelper"
+            style="@style/TextAppearance.Trendie.Helper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="여러 키워드를 , 로 구분하여 한 번에 검색할 수 있어요!"
+            android:labelFor="@id/etKeyword"
+            android:layout_marginBottom="8dp"/>
+
+        <!-- 키워드 입력 -->
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilKeyword"
-            theme="@style/TrendieTextField"
+            style="@style/TrendieTextField"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="@string/hint_keyword_search"
-            android:layout_marginTop="12dp">
+            android:hint="@string/hint_keyword_search">
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/etKeyword"
-            theme="@style/TrendieEditText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:imeOptions="actionSearch"
-            android:inputType="text"
-            android:singleLine="true" />
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etKeyword"
+                style="@style/TrendieEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:singleLine="true"
+                android:freezesText="true"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSearchKeyword"
+            style="@style/TrendieCtaButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="검색"
-            android:textSize="16sp"
-            android:textAllCaps="false"
-            android:textColor="@color/colorPrimaryText"
-            android:background="@drawable/rounded_toggle_skyblue_button"
-            android:layout_marginTop="16dp"
-            android:layout_marginBottom="30dp" />
-
+            android:textColor="@color/colorIndigo"
+            android:layout_marginTop="@dimen/field_gap"
+            android:layout_marginBottom="12dp"/>
     </LinearLayout>
-</LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

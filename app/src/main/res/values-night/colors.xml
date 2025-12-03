@@ -18,4 +18,8 @@
     <color name="colorInputBg">#1F2937</color>
     <color name="colorInputStroke">#374151</color>
     <color name="colorInputHint">#9CA3AF</color>
+    <color name="bookmark_card_bg">#1F2933</color>
+    <color name="colorPositiveText">#6EE7B7</color>
+    <color name="colorChipText">#E5E7EB</color>
+    <color name="colorCard">#E6EFF9</color>
 </resources>

@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <!-- 프래그먼트가 차지할 영역: 바텀탭 위까지만 -->
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="0dp"

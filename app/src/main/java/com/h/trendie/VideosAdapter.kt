@@ -13,7 +13,7 @@ import coil.load
 import com.h.trendie.model.VideoItem
 
 class VideosAdapter(
-    private val onClick: ((VideoItem) -> Unit)? = null   // ← nullable 로
+    private val onClick: ((VideoItem) -> Unit)? = null
 ) : RecyclerView.Adapter<VideosAdapter.VH>() {
 
     private val items = mutableListOf<VideoItem>()
@@ -30,16 +30,20 @@ class VideosAdapter(
 
         fun bind(item: VideoItem) {
             tvTitle.text = item.title
-            imgThumb.load(item.thumbnailUrl) { crossfade(true) }
+
+            when {
+                !item.videoUrl.isNullOrBlank() && item.videoUrl!!.contains("youtu") ->
+                    imgThumb.loadYouTubeBest(item.videoUrl!!)
+                !item.thumbnailUrl.isNullOrBlank() ->
+                    imgThumb.load(item.thumbnailUrl) { crossfade(true) }
+            }
 
             itemView.setOnClickListener {
-                // 1) 외부 콜백이 있으면 우선 실행하고 끝
                 onClick?.let { cb ->
                     cb(item)
                     return@setOnClickListener
                 }
 
-                // 2) 기본 동작: videoUrl 로 브라우저/유튜브 열기
                 val url = item.videoUrl
                 if (!url.isNullOrBlank()) {
                     val ctx = it.context
@@ -53,10 +57,43 @@ class VideosAdapter(
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): VH {
         val v = LayoutInflater.from(parent.context)
-            .inflate(R.layout.item_video, parent, false) // imgThumbnail, tvTitle
+            .inflate(R.layout.item_video, parent, false) // imgThumbnail, tvTitle 있어야 함
         return VH(v)
     }
 
     override fun onBindViewHolder(holder: VH, position: Int) = holder.bind(items[position])
+
     override fun getItemCount(): Int = items.size
+}
+
+private fun extractYouTubeId(idOrUrl: String): String? {
+    val s = idOrUrl.trim()
+    if (!s.startsWith("http", ignoreCase = true)) {
+        return s
+    }
+    val rx1 = Regex("""[?&]v=([-_a-zA-Z0-9]{11})""")
+    val rx2 = Regex("""youtu\.be/([-_a-zA-Z0-9]{11})""")
+    return rx1.find(s)?.groupValues?.getOrNull(1)
+        ?: rx2.find(s)?.groupValues?.getOrNull(1)
+}
+
+private fun ImageView.loadYouTubeBest(idOrUrl: String) {
+    val id = extractYouTubeId(idOrUrl) ?: return
+    val urls = listOf(
+        "https://i.ytimg.com/vi/$id/maxresdefault.jpg",
+        "https://i.ytimg.com/vi/$id/sddefault.jpg",
+        "https://i.ytimg.com/vi/$id/hqdefault.jpg",
+        "https://i.ytimg.com/vi/$id/mqdefault.jpg"
+    )
+
+    fun tryAt(idx: Int) {
+        this.load(urls[idx]) {
+            crossfade(true)
+            listener(
+                onError = { _, _ -> tryAt(idx + 1) } // 실패 시 다음 화질 시도
+            )
+        }
+    }
+
+    tryAt(0)
 }

@@ -27,7 +27,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import com.google.android.material.card.MaterialCardView
 import com.h.trendie.model.HomeSnapshot
-import com.h.trendie.network.ApiClient
+import com.h.trendie.ui.theme.applyTopInsetPadding
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -37,12 +37,17 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         object : ViewModelProvider.Factory {
             @Suppress("UNCHECKED_CAST")
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                return HomeViewModel(com.h.trendie.MockHomeRepository()) as T
+                val repo = if (BuildConfig.DEBUG) {
+                    com.h.trendie.data.RealHomeRepository()
+                } else {
+                    com.h.trendie.data.RealHomeRepository()
+                }
+                return HomeViewModel(repo) as T
             }
         }
     }
 
-    private lateinit var risingAdapter: KeywordRisingAdapter
+    private lateinit var keywordrisingAdapter: KeywordRisingAdapter
     private lateinit var rvRising: RecyclerView
 
     private lateinit var videosAdapter: VideosAdapter
@@ -52,28 +57,28 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
     override fun onViewCreated(v: View, s: Bundle?) {
         super.onViewCreated(v, s)
 
-        // ----- view refs -----
+        v.findViewById<View>(R.id.headerContainer)?.applyTopInsetPadding()
+
         rvRising = v.findViewById(R.id.rvRising)
         barChart = v.findViewById(R.id.barChartHashtags)
         chartCard = (barChart.parent as? MaterialCardView)
 
-        barChart.renderer = RoundedBarChartRenderer(
-            barChart,
-            barChart.animator,
-            barChart.viewPortHandler
-        )
+        runCatching {
+            barChart.renderer = RoundedBarChartRenderer(
+                barChart, barChart.animator, barChart.viewPortHandler
+            )
+        }
 
-        // ----- 급상승 키워드(그리드) -----
-        risingAdapter = KeywordRisingAdapter()
+        // 급상승 키워드
+        keywordrisingAdapter = KeywordRisingAdapter()
         rvRising.apply {
             layoutManager = GridLayoutManager(context, 2)
-            adapter = risingAdapter
+            adapter = keywordrisingAdapter
             itemAnimator = null
             setHasFixedSize(false)
         }
 
-
-        // ----- 인기 동영상 가로 스크롤 -----
+        // 인기 동영상
         videosAdapter = VideosAdapter { item ->
             val url = item.videoUrl
             if (!url.isNullOrBlank()) {
@@ -91,19 +96,21 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
         viewLifecycleOwner.lifecycleScope.launch {
             vm.state.collectLatest { st: UiState<HomeSnapshot> ->
-                val snap = st.data ?: run {
-                    renderEmpty()
-                    return@collectLatest
-                }
+                val snap = st.data ?: return@collectLatest renderEmpty()
                 bind(snap)
             }
         }
     }
 
     private fun bind(snap: HomeSnapshot) {
-
+        // 기본 텍스트 색 (제목/수치표시)
         val txt = safeColor(R.color.colorPrimaryText, Color.DKGRAY)
-        val grid = safeColor(R.color.colorGrey, 0xFF9E9E9E.toInt())
+
+        val topBarColor    = android.graphics.Color.parseColor("#CFF7D9") // 1등 막대
+        val normalBarColor = android.graphics.Color.parseColor("#C2E0F9") // 나머지 막대
+
+        val surfaceColor   = safeColor(R.color.colorSurface, android.graphics.Color.WHITE)
+        val gridSky        = safeColor(R.color.colorDivider, 0xFFD5E4FF.toInt())
 
         // ---------- 해시태그 차트 ----------
         val items = snap.hashtagsTop10.orEmpty()
@@ -112,11 +119,15 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         } else {
             chartCard?.isVisible = true
 
-            val topIndex = items.withIndex().maxByOrNull { it.value.count }?.index ?: 0
-            val first = safeColor(R.color.chart_bar_first, Color.parseColor("#4F7EFF"))
-            val rest  = safeColor(R.color.chart_bar_default, Color.parseColor("#C7D1FF"))
+            chartCard?.setCardBackgroundColor(surfaceColor)
+            barChart.setBackgroundColor(surfaceColor)
 
-            val barColors = items.mapIndexed { i, _ -> if (i == topIndex) first else rest }
+            val topIndex = items.withIndex().maxByOrNull { it.value.count }?.index ?: 0
+
+            val barColors = items.mapIndexed { i, _ ->
+                if (i == topIndex) topBarColor else normalBarColor
+            }
+
             val entries = items.mapIndexed { i, h ->
                 BarEntry(i.toFloat(), h.count.coerceAtLeast(0).toFloat(), h.tag)
             }
@@ -125,12 +136,10 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 colors = barColors
                 setDrawValues(true)
                 valueTextSize = 10f
-                val txt = safeColor(R.color.colorPrimaryText, Color.DKGRAY)
-                setValueTextColors(items.mapIndexed { i, _ -> if (i == topIndex) first else txt })
-
+                setValueTextColors(List(items.size) { txt })
                 valueFormatter = object : ValueFormatter() {
                     override fun getBarLabel(e: BarEntry?): String {
-                        if (e == null) return ""
+                        e ?: return ""
                         val crown = if (e.x.toInt() == topIndex) "👑 " else ""
                         return crown + e.y.toInt().toString()
                     }
@@ -139,7 +148,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
             }
 
             barChart.apply {
-                data = BarData(set).apply { barWidth = 0.32f }
+                data = BarData(set).apply {
+                    barWidth = 0.32f
+                }
                 description.isEnabled = false
                 legend.isEnabled = false
                 axisRight.isEnabled = false
@@ -149,11 +160,11 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                 setMinOffset(16f)
                 setExtraOffsets(12f, 8f, 12f, 16f)
 
-                val labels2 = items.map { wrapLabel2Lines(it.tag ?: "", maxPerLine = 6) }
+                val labels2 = items.map { wrapLabel2Lines(it.tag.orEmpty(), maxPerLine = 6) }
 
                 xAxis.apply {
                     textColor = txt
-                    axisLineColor = grid
+                    axisLineColor = gridSky
                     position = XAxis.XAxisPosition.BOTTOM
                     setDrawGridLines(false)
                     granularity = 1f
@@ -169,8 +180,8 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
                 axisLeft.apply {
                     textColor = txt
-                    axisLineColor = grid
-                    gridColor = grid
+                    axisLineColor = gridSky
+                    gridColor = gridSky
                 }
 
                 setDragEnabled(items.size > 5)
@@ -184,10 +195,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
                         e: com.github.mikephil.charting.data.Entry?,
                         h: com.github.mikephil.charting.highlight.Highlight?
                     ) {
-                        val tag = (e as? BarEntry)?.data as? String ?: return
-                        if (tag.isNotBlank()) {
-                            openUrlSafely("https://www.youtube.com/results?search_query=$tag")
-                        }
+                        val raw = (e as? BarEntry)?.data as? String ?: return
+                        val tag = raw.trim().removePrefix("#")
+                        if (tag.isNotBlank()) openYouTubeSearch(tag)
                     }
                     override fun onNothingSelected() {}
                 })
@@ -199,7 +209,7 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         }
 
         // ---------- 급상승 키워드 ----------
-        risingAdapter.submit(snap.risingTop10.orEmpty())
+        keywordrisingAdapter.submit(snap.risingTop10.orEmpty())
 
         // ---------- 인기 동영상 ----------
         videosAdapter.submit(snap.popularVideos.orEmpty())
@@ -207,9 +217,9 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
 
     private fun renderEmpty() {
         chartCard?.isVisible = false
-        risingAdapter.submit(emptyList())
-        videosAdapter.submit(emptyList())
-        if (::barChart.isInitialized) {
+        if (this::keywordrisingAdapter.isInitialized) keywordrisingAdapter.submit(emptyList())
+        if (this::videosAdapter.isInitialized) videosAdapter.submit(emptyList())
+        if (this::barChart.isInitialized) {
             barChart.clear()
             barChart.invalidate()
         }
@@ -230,10 +240,25 @@ class HomeFragment : Fragment(R.layout.fragment_home) {
         try { ContextCompat.getColor(requireContext(), resId) } catch (_: Exception) { fallback }
 
     private fun openUrlSafely(url: String) {
-        try {
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
-        } catch (_: ActivityNotFoundException) {
+        try { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url))) }
+        catch (_: ActivityNotFoundException) {
             Toast.makeText(requireContext(), "열 수 있는 앱이 없어요.", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+    private fun openYouTubeSearch(query: String) {
+        val webUri = Uri.Builder()
+            .scheme("https")
+            .authority("www.youtube.com")
+            .appendPath("results")
+            .appendQueryParameter("search_query", query)
+            .build()
+
+        val appIntent = Intent(Intent.ACTION_VIEW, webUri).setPackage("com.google.android.youtube")
+        try {
+            startActivity(appIntent)
+        } catch (_: ActivityNotFoundException) {
+            openUrlSafely(webUri.toString())
         }
     }
 }

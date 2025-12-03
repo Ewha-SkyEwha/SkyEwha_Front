@@ -16,7 +16,7 @@ class TrendieLogoBar @JvmOverloads constructor(
 ) : FrameLayout(context, attrs, defStyleAttr) {
 
     init {
-        LayoutInflater.from(context).inflate(R.layout.view_trendie_logo_bar, this, true)
+        LayoutInflater.from(context).inflate(R.layout.include_trendie_header, this, true)
 
         ViewCompat.setOnApplyWindowInsetsListener(this) { v, insets ->
             val topInset = insets.getInsets(WindowInsetsCompat.Type.statusBars()).top

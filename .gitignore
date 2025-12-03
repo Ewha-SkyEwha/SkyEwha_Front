@@ -31,3 +31,22 @@ google-services.json
 
 # Android Profiling
 *.hprof
+
+# Kotlin cache
+.kotlin/
+
+# Android App Bundles
+*.aab
+
+# OS 잡파일
+.DS_Store
+Thumbs.db
+
+# Env / config files
+.env
+.env.*
+.env.txt
+
+# Old experimental repos (not part of Trendie app)
+SkyEwha/
+test302/

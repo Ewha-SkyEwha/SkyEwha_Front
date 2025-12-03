@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="page_pad_h">24dp</dimen>          <!-- 좌우 패딩 -->
+    <dimen name="page_top_gap">28dp</dimen>        <!-- 헤더 상단 여유 -->
+    <dimen name="section_gap">20dp</dimen>         <!-- 섹션 간 간격 -->
+    <dimen name="field_gap">14dp</dimen>           <!-- 필드 간 간격 -->
+    <dimen name="page_bottom_gap">24dp</dimen>     <!-- 하단 여유(내비 위) -->
+    <dimen name="cta_height">56dp</dimen>          <!-- CTA 표준 높이 -->
+    <dimen name="header_min_height">56dp</dimen>
+    <dimen name="header_h_margin">16dp</dimen>
+    <dimen name="header_logo_size">24dp</dimen>
+    <dimen name="grid_8dp">8dp</dimen>
+    <dimen name="bookmark_list_hpad">16dp</dimen>
+    <dimen name="bookmark_list_bpad">16dp</dimen>
+    <dimen name="bookmark_list_vgap">12dp</dimen>
+
+</resources>

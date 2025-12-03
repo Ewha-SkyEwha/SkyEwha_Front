@@ -1,36 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:id="@+id/pageRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/colorSurface">
 
-    <!-- 상단 로고 -->
-    <com.h.trendie.ui.theme.TrendieLogoBar
-        android:id="@+id/logoBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+    <!-- 헤더 -->
+    <include
+        android:id="@+id/header"
+        layout="@layout/include_trendie_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
 
+    <!-- 중앙 안내문 -->
     <LinearLayout
-        android:layout_width="match_parent"
+        android:id="@+id/centerGuide"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_weight="1"
         android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:paddingStart="@dimen/page_pad_h"
+        android:paddingEnd="@dimen/page_pad_h"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/bottomArea"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
 
-        <!-- ✅ 닉네임을 코드에서 넣을 안내문 -->
         <TextView
             android:id="@+id/tvGuideUpload"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="(닉네임) 님의 영상을 업로드하고\nTRENDIE가 제공하는 피드백 보고서를\n바로 확인해 보세요!"
+            android:text="제목을 입력하고\nTRENDIE가 제공하는 피드백 보고서를\n확인해 보세요!"
             android:textSize="20sp"
             android:textColor="@color/colorPrimaryText"
-            android:gravity="center"/>
+            android:gravity="center" />
 
-        <!-- 영상 조건 안내문구 -->
         <TextView
             android:id="@+id/tvFormatInfo"
             android:layout_width="match_parent"
@@ -38,47 +47,62 @@
             android:text="* mp4만 업로드할 수 있어요!"
             android:textSize="16sp"
             android:textColor="@color/colorGrey"
-            android:layout_margin="10dp"
-            android:gravity="center"/>
+            android:layout_marginTop="10dp"
+            android:gravity="center" />
     </LinearLayout>
 
-    <!-- 제목 입력란 -->
-    <EditText
-        android:id="@+id/etFeedbackTitle"
-        android:layout_width="match_parent"
+    <!-- 하단 입력 -->
+    <LinearLayout
+        android:id="@+id/bottomArea"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:hint="피드백 내역에 저장할 제목 입력"
-        android:textSize="16sp"
-        android:background="@drawable/rounded_white_button"
-        android:padding="12dp"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:inputType="text"/>
+        android:orientation="vertical"
+        android:paddingStart="@dimen/page_pad_h"
+        android:paddingEnd="@dimen/page_pad_h"
+        android:paddingBottom="@dimen/page_bottom_gap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent">
 
-    <!-- 허용 문자 안내 -->
-    <TextView
-        android:id="@+id/tvCharInfo"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="한글, 영문, 숫자, _만 사용 가능"
-        android:textSize="12sp"
-        android:textColor="@color/colorGrey"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="10dp"/>
+        <!-- 헬퍼 -->
+        <TextView
+            android:id="@+id/tvTitleHelper"
+            style="@style/TextAppearance.Trendie.Helper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="한글, 영문, 숫자, _만 사용 가능"
+            android:labelFor="@id/etFeedbackTitle"
+            android:layout_marginBottom="8dp" />
 
-    <!-- ✅ 하늘색 버튼 -->
-    <Button
-        android:id="@+id/btnUpload"
-        android:text="영상 업로드"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/colorPrimaryText"
-        android:background="@drawable/rounded_toggle_skyblue_button"
-        android:layout_marginStart="24dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="30dp"
-        android:layout_gravity="center" />
+        <!-- 제목 입력 -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilTitle"
+            style="@style/TrendieTextField"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="피드백 내역에 저장할 제목을 입력해 주세요"
+            app:helperTextEnabled="false">
 
-</LinearLayout>
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/etFeedbackTitle"
+                style="@style/TrendieEditText"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone"
+                android:inputType="text"
+                android:singleLine="true" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnUpload"
+            style="@style/TrendieCtaButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="다음"
+            android:textColor="@color/colorIndigo"
+            android:layout_marginTop="@dimen/field_gap"
+            android:layout_marginBottom="@dimen/field_gap" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

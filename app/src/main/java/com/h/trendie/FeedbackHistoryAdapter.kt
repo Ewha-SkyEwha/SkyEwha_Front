@@ -4,6 +4,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.RecyclerView
 
 class FeedbackHistoryAdapter(
@@ -24,8 +25,13 @@ class FeedbackHistoryAdapter(
 
     override fun onBindViewHolder(holder: HistoryVH, position: Int) {
         val item = items[position]
-        holder.tvTitle.text = item.title
-        holder.tvDate.text  = item.date
+
+        holder.tvTitle.text = "${item.title}"
+
+        val hasDate = item.date.isNotBlank()
+        holder.tvDate.isVisible = hasDate
+        if (hasDate) holder.tvDate.text = item.date
+
         holder.itemView.setOnClickListener { onClick(item) }
     }
 

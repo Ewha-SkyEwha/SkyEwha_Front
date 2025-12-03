@@ -1,6 +1,8 @@
 package com.h.trendie.model
 
-import com.h.trendie.model.VideoItem
+import com.squareup.moshi.Json
+
 data class PresearchRes(
-    val items: List<VideoItem> = emptyList()
+    @Json(name = "results")
+    val results: List<VideoSearchResponse>
 )

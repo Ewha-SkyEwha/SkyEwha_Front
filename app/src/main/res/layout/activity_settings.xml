@@ -8,7 +8,7 @@
 
     <!-- Toolbar -->
     <include
-        android:id="@+id/settingsToolbar"
+        android:id="@+id/headerToolbar"
         layout="@layout/view_simple_toolbar" />
 
     <!-- 콘텐츠 패딩 -->
@@ -87,7 +87,7 @@
             android:layout_height="1dp"
             android:background="@color/colorDivider" />
 
-        <!-- 알림설정 (필요 시 연결) -->
+        <!-- 알림설정 -->
         <LinearLayout
             android:id="@+id/rowAlarm"
             android:layout_width="match_parent"
@@ -147,7 +147,6 @@
             android:layout_height="1dp"
             android:background="@color/colorDivider" />
 
-        <!-- 공간 채우기: 로그아웃 아래로 밀기 -->
         <View
             android:layout_width="match_parent"
             android:layout_height="0dp"

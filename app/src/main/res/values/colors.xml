@@ -12,10 +12,14 @@
     <color name="colorError">#FF2222</color>
     <color name="bottom_nav_selected">#3F618C</color>
     <color name="bottom_nav_unselected">#AAAAAA</color>
-    <color name="chart_bar_first">#3F618C</color>
+    <color name="chart_bar_first">#1A3B5D</color>
     <color name="chart_bar_default">#9FBCDB</color>
     <color name="brand_logo">#9FBCDB</color>
     <color name="colorInputBg">#F1F3F5</color>
     <color name="colorInputStroke">#D0D7DE</color>
     <color name="colorInputHint">#6B7280</color>
+    <color name="bookmark_card_bg">#FFFFFF</color>
+    <color name="colorChipText">#334155</color>
+    <color name="colorPositiveText">#0E7A3E</color>
+    <color name="colorCard">#E6EFF9</color>
 </resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/headerContainer"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingStart="@dimen/page_pad_h"
+    android:paddingEnd="@dimen/page_pad_h"
+    android:paddingTop="@dimen/page_top_gap"
+    android:paddingBottom="@dimen/page_top_gap">
+
+    <TextView
+        android:id="@+id/logoText"
+        style="@style/Trendie.BrandTitle"
+        android:text="TRENDIE"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+</LinearLayout>

@@ -13,4 +13,14 @@ interface FeedbackHistoryDao {
     suspend fun getAll(): List<FeedbackHistory>
     @Query("INSERT INTO feedback_history(title, date) VALUES(:title, :date)")
     suspend fun insertSimple(title: String, date: String)
+
+    @Query("DELETE FROM feedback_history")
+    suspend fun clear()
+
+    @Insert
+    suspend fun insertAll(items: List<FeedbackHistory>)
+
+    @Query("SELECT * FROM feedback_history ORDER BY id DESC")
+    fun getAllFlow(): kotlinx.coroutines.flow.Flow<List<FeedbackHistory>>
+
 }

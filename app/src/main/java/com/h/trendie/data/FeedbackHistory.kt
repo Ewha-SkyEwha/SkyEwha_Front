@@ -7,5 +7,6 @@ import androidx.room.PrimaryKey
 data class FeedbackHistory(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
     val title: String,
-    val date: String
+    val date: String,
+    val feedbackId: Int? = null
 )

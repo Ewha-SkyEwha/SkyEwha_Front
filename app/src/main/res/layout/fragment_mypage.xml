@@ -23,7 +23,6 @@
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
-    <!-- 톱니 아이콘 버튼 (터치 48dp) -->
     <ImageButton
         android:id="@+id/btnSettings"
         style="?attr/borderlessButtonStyle"
@@ -134,7 +133,7 @@
 
         <TextView
             android:id="@+id/tvFeedbackHistory"
-            android:text="보고서 피드백 내역"
+            android:text="피드백 보고서 내역"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/colorPrimaryText"
@@ -143,16 +142,16 @@
             android:layout_width="150dp"/>
 
         <TextView
-            android:id="@+id/tvPreferenceHistory"
-            android:text="선호도 조사 내역 확인"
+            android:id="@+id/tvBookmark"
+            android:text="북마크"
             android:textSize="16sp"
             android:textStyle="bold"
             android:textColor="@color/colorPrimaryText"
             android:layout_height="20dp"
             android:layout_width="150dp"/>
+
     </LinearLayout>
 
-    <!-- 여백을 위해 weight 사용 -->
     <View
         android:layout_width="match_parent"
         android:layout_height="0dp"

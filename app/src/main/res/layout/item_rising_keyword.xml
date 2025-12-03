@@ -1,4 +1,5 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@drawable/bg_rising_card"
@@ -18,8 +19,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_rank_pill"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:paddingStart="8dp"
+            android:paddingEnd="8dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
             android:text="#1"
@@ -41,37 +42,46 @@
     </LinearLayout>
 
     <!-- 2행: 언급량 + 상승 퍼센트 -->
-    <LinearLayout
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
         android:layout_marginTop="6dp">
-
-        <TextView
-            android:id="@+id/tvCount"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:background="@drawable/bg_chip"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
-            android:paddingTop="2dp"
-            android:paddingBottom="2dp"
-            android:text="언급 1,234"
-            android:textSize="12sp"
-            android:textColor="#334155"/>
 
         <TextView
             android:id="@+id/tvGrowth"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_chip_positive"
-            android:paddingLeft="8dp"
-            android:paddingRight="8dp"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
             android:paddingTop="2dp"
             android:paddingBottom="2dp"
-            android:layout_marginStart="6dp"
             android:text="+37%"
             android:textSize="12sp"
-            android:textColor="#0E7A3E"/>
-    </LinearLayout>
+            android:textColor="#0E7A3E"
+            android:singleLine="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+        <TextView
+            android:id="@+id/tvCount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_chip"
+            android:paddingStart="6dp"
+            android:paddingEnd="6dp"
+            android:paddingTop="2dp"
+            android:paddingBottom="2dp"
+            android:text="언급 1,234"
+            android:textSize="12sp"
+            android:textColor="#334155"
+            android:singleLine="true"
+            android:ellipsize="end"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/tvGrowth"
+            app:layout_constraintTop_toTopOf="@id/tvGrowth"
+            app:layout_constraintBottom_toBottomOf="@id/tvGrowth"
+            android:layout_marginEnd="5dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </LinearLayout>

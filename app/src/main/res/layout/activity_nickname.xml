@@ -75,7 +75,7 @@
             android:id="@+id/tvNicknameGuide"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="2~10자, 한글/영문/숫자만 입력할 수 있어요"
+            android:text="1~10자, 한글/영문/숫자만 입력할 수 있어요"
             android:textSize="14sp"
             android:textColor="@color/colorIndigo"
             android:gravity="center"

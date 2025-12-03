@@ -1,7 +1,9 @@
 package com.h.trendie
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
@@ -9,58 +11,81 @@ import android.widget.Toast
 import androidx.core.content.getSystemService
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.updatePadding
+import androidx.core.view.WindowInsetsCompat.Type
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import com.google.android.material.button.MaterialButton
+import com.h.trendie.ui.theme.applyTopInsetPadding
+import kotlin.jvm.java
 
 class KeywordFragment : Fragment(R.layout.fragment_keyword) {
 
     private lateinit var etKeyword: EditText
-    private lateinit var btnSearch: MaterialButton
+    private lateinit var btnSearch: View
+    private var centerGuide: View? = null
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        etKeyword = view.findViewById(R.id.etKeyword)
-        btnSearch = view.findViewById(R.id.btnSearchKeyword)
+        etKeyword   = view.findViewById(R.id.etKeyword)
+        btnSearch   = view.findViewById(R.id.btnSearchKeyword)
+        centerGuide = view.findViewById(R.id.centerGuide)
 
-        // IME/네비게이션 바 인셋 반영
-        val root = view.findViewById<View>(R.id.rootKeyword)
-        ViewCompat.setOnApplyWindowInsetsListener(root) { v, insets ->
-            val types = WindowInsetsCompat.Type.navigationBars() or WindowInsetsCompat.Type.ime()
-            v.updatePadding(bottom = insets.getInsets(types).bottom)
-            insets
+        // 헤더 인셋
+        view.findViewById<View>(R.id.header)?.applyTopInsetPadding()
+        view.findViewById<View>(R.id.headerContainer)?.applyTopInsetPadding()
+
+        // IME 있을 때만 버튼 올리기
+        val baseBtnMargin = (btnSearch.layoutParams as? ViewGroup.MarginLayoutParams)?.bottomMargin ?: 0
+        ViewCompat.setOnApplyWindowInsetsListener(view) { _, insets ->
+            val imeVisible = insets.isVisible(Type.ime())
+            val imeBottom  = insets.getInsets(Type.ime()).bottom
+
+            centerGuide?.visibility = if (imeVisible) View.GONE else View.VISIBLE
+
+            (btnSearch.layoutParams as? ViewGroup.MarginLayoutParams)?.let { lp ->
+                val newMargin = if (imeVisible) baseBtnMargin + imeBottom else baseBtnMargin
+                if (lp.bottomMargin != newMargin) {
+                    lp.bottomMargin = newMargin
+                    btnSearch.layoutParams = lp
+                }
+            }
+            WindowInsetsCompat.CONSUMED
         }
 
+        fun tokenize(input: String): List<String> =
+            input.replace('，', ',')
+                .split(",", "\n")
+                .map { it.trim() }
+                .filter { it.isNotEmpty() }
+                .distinct()
+                .take(10)
+
         fun goSearch() {
-            val keyword = etKeyword.text?.toString()?.trim().orEmpty()
-            if (keyword.isEmpty()) {
+            val raw = etKeyword.text?.toString().orEmpty()
+            val keywords = tokenize(raw)
+            if (keywords.isEmpty()) {
                 Toast.makeText(requireContext(), "키워드를 입력하세요", Toast.LENGTH_SHORT).show()
                 return
             }
 
-            // 키보드 내려주기
+            // 키보드 내리기
             requireContext().getSystemService<InputMethodManager>()
                 ?.hideSoftInputFromWindow(etKeyword.windowToken, 0)
+            etKeyword.clearFocus()
 
-            // 현재 Fragment 가 들어있는 부모 컨테이너 id 가져오기
-            val containerId = (requireView().parent as? View)?.id
-                ?: throw IllegalStateException("Container ID not found")
-
-            parentFragmentManager.commit {
-                setReorderingAllowed(true)
-                hide(this@KeywordFragment)
-                add(containerId, KeywordResultFragment.newInstance(keyword), "keyword_result")
-                addToBackStack("keyword_result")
+            // 결과 화면 이동
+            val intent = Intent(requireContext(), KeywordResultActivity::class.java).apply {
+                putStringArrayListExtra(
+                    KeywordResultActivity.EXTRA_KEYWORDS,
+                    ArrayList(keywords)
+                )
             }
+            startActivity(intent)
         }
 
         btnSearch.setOnClickListener { goSearch() }
         etKeyword.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_SEARCH || actionId == EditorInfo.IME_ACTION_DONE) {
-                goSearch()
-                true
+                goSearch(); true
             } else false
         }
     }

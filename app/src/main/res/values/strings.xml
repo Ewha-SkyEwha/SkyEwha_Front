@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">Trendie</string>
     <string name="subtitle_text">Be <b>Trendy</b> with <font color="#003366">Trendie</font></string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="brand_trendie">TRENDIE</string>
     <string name="settings">설정</string>
@@ -20,4 +19,13 @@
     <string name="logout">로그아웃</string>
     <string name="label_no_linked_account">연동 계정 없음</string>
     <string name="hint_keyword_search">키워드를 입력하세요</string>
+    <string name="login_google">구글 로그인</string>
+    <string name="login_kakao">카카오 로그인</string>
+    <string name="kakao_native_app_key">2394f6cd7c232d1ea2c1ce7a1b787f74</string>
+    <string name="content_desc_empty">빔</string>
+    <string name="remove_bookmark">remove_bookmark</string>
+    <string name="content_desc_video_thumbnail">content_desc_video_thumbnail</string>
+    <string name="bookmark">북마크</string>
+    <string name="bookmark_add">북마크 추가</string>
+    <string name="bookmark_remove">북마크 해제</string>
 </resources>

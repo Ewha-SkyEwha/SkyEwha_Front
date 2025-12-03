@@ -25,10 +25,9 @@ class RoundedBarChartRenderer(
         buffer.setBarWidth(mChart.barData.barWidth)
         buffer.feed(dataSet)
 
-        // ★★ 가장 중요: 값들을 "픽셀 좌표"로 변환해야 실제 화면에 보임
         trans.pointValuesToPixel(buffer.buffer)
 
-        val radius = 12f // 모서리 정도(상단만 둥글게)
+        val radius = 24f
         val path = Path()
         val rect = RectF()
         val radiiTopOnly = floatArrayOf(radius, radius, radius, radius, 0f, 0f, 0f, 0f)
@@ -49,7 +48,6 @@ class RoundedBarChartRenderer(
             path.addRoundRect(rect, radiiTopOnly, Path.Direction.CW)
             c.drawPath(path, mRenderPaint)
 
-            // 경계선이 있다면(보통 0f) 그리기
             if (dataSet.barBorderWidth > 0f) {
                 c.drawRoundRect(rect, radius, radius, mBarBorderPaint)
             }

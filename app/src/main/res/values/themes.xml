@@ -3,7 +3,7 @@
 
     <!-- 앱 기본 테마 -->
     <style name="Theme.Trendie" parent="Theme.Material3.Light.NoActionBar">
-        <!-- 배경/서피스 계열 -->
+        <!-- 배경 -->
         <item name="colorSurface">@color/colorSurface</item>
         <item name="android:colorBackground">@color/colorBackground</item>
 
