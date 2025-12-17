@@ -79,7 +79,6 @@
 - `com/h/trendie/data/`
   - `ApiService.kt` : 백엔드 API 인터페이스 정의
   - `UserPrefs.kt` : DataStore 기반 닉네임 저장/조회
-  - `AppDatabase.kt`, `FeedbackHistoryDao.kt` 등 : Room 로컬 저장소
 
 - `com/h/trendie/data/auth/`
   - `TokenProvider.kt` : EncryptedSharedPreferences 기반 토큰 저장/조회
