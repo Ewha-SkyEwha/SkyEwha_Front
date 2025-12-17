@@ -2,7 +2,6 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
-    // ⬇️ Kotlin 2.0.21 쓰는 전제 —> KSP도 2.0.21-*
     id("com.google.devtools.ksp") version "2.0.21-1.0.25"
 }
 
@@ -20,7 +19,6 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // ✅ AGP 8.x + Kotlin 2.x → JDK 17 권장
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
@@ -33,7 +31,6 @@ android {
         buildConfig = true
     }
 
-    // 빌드 막는 Lint 에러 방지 (네가 이미 켜둔 옵션 유지)
     lint { abortOnError = false }
 
     buildTypes {
@@ -52,7 +49,6 @@ dependencies {
     implementation("com.google.code.gson:gson:2.13.2")
     implementation("androidx.swiperefreshlayout:swiperefreshlayout:1.1.0")
 
-    // ---------- OkHttp (BOM로 버전 관리: 중복/충돌 제거) ----------
     implementation(platform("com.squareup.okhttp3:okhttp-bom:4.12.0"))
     implementation("com.squareup.okhttp3:okhttp")
     implementation("com.squareup.okhttp3:logging-interceptor")
@@ -67,7 +63,7 @@ dependencies {
     // Kakao
     implementation("com.kakao.sdk:v2-user:2.21.7")
 
-    // AndroidX 기본 (🔁 중복 제거 & 최신 한 벌로 통일)
+    // AndroidX 기본
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.activity:activity-ktx:1.9.2")
@@ -77,11 +73,11 @@ dependencies {
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation("androidx.cardview:cardview:1.0.0")
 
-    // Lifecycle (🔁 2.8.1/2.8.4 혼재 → 2.8.4로 통일)
+    // Lifecycle
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.4")
 
-    // DataStore (🔁 중복 라인 제거)
+    // DataStore
     implementation("androidx.datastore:datastore-preferences:1.1.1")
 
     // 권장: 보안 저장소
@@ -105,7 +101,7 @@ dependencies {
     implementation("androidx.navigation:navigation-fragment-ktx:2.7.7")
     implementation("androidx.navigation:navigation-ui-ktx:2.7.7")
 
-    // Compose (버전은 libs.versions.toml의 BOM/플러그인에 따름)
+    // Compose
     implementation(libs.androidx.activity.compose)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
